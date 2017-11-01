@@ -1,14 +1,14 @@
+let wanUtil = require('wanchain-util');
+
 var fs = require('fs');
 var ethUtil = require('ethereumjs-util');
-var wanUtil = require('wanchain-util');
 var ethUtilCrypto = require('crypto');
 var ethUtilScrypt = require('scryptsy');
 var ethUtilUuid = require('uuid');
-var path = require('path');
 
 
 function createKeystore(password, fileName, wanchainLog) {
-	var filepath = __dirname + '/keystore/' + fileName + '.json';
+	var filepath = '../src/keystore/' + fileName + '.json';
 	var result = [];
 
 	try {
@@ -83,12 +83,9 @@ function createKeystore(password, fileName, wanchainLog) {
 
 		fs.writeFileSync(filepath, JSON.stringify(result));
 		wanchainLog('\naddress: ' + data.address + '\nwaddress: ' + data.waddress + '\npassword: ' + password + '\nfilename: ' + fileName, '\x1b[32m');
-		console.log('the keystore file has create success!');
+		wanchainLog('the keystore file has been created successful!', '\x1b[33m');
 		return result;
 	}
 }
-
-// var result = createKeystore('wanchain', 'testkey1');
-// console.log(result);
 
 module.exports = createKeystore;

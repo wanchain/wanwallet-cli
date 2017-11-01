@@ -9,8 +9,10 @@ const config = require('../config');
 const web3 = new Web3(new Web3.providers.HttpProvider( config.host + ":8545"));
 
 const wanchainLog = require('../utils/wanchainLog');
+const otaDataStateFunc = require('../utils/otaDataStateFunc');
 
 web3.wan = new wanUtil.web3Wan(web3);
+
 // Start the prompt
 prompt.start();
 prompt.message = colors.blue("wanWallet");
@@ -21,46 +23,31 @@ prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
 
 	let waddress = result.waddress;
 
-	let otaDataStr = fs.readFileSync("./otaData/otaData.txt","utf8");
-	let otaDataTotal = otaDataStr.split('\n');
+	try {
+		let otaDataStr = fs.readFileSync("./otaData/otaData.txt","utf8");
+		let otaDataTotal = otaDataStr.split('\n');
 
-	let otaData = [];
-	for (let i=0; i<otaDataTotal.length; i++) {
-		if (otaDataTotal[i].length >0) {
-			if(JSON.parse(otaDataTotal[i]).waddress === waddress) {
-				otaData.push(otaDataTotal[i])
+		let otaData = [];
+		for (let i=0; i<otaDataTotal.length; i++) {
+			if (otaDataTotal[i].length >0) {
+				if(JSON.parse(otaDataTotal[i]).waddress === waddress) {
+					otaData.push(otaDataTotal[i])
+				}
 			}
 		}
-	}
 
-
-	try {
 		try {
 			let otaDataStateStr = fs.readFileSync("./otaData/otaDataState.txt","utf8");
-			let otaDataState = otaDataStateStr.split('\n');
 
-			const statTuple = [];
+			let result = otaDataStateFunc(otaDataStateStr);
+			let otaDictStr = result[0];
+			let statTuple = result[1];
 
-			const otaDict = [];
-			for (let i =0; i<otaDataState.length; i++) {
-				if(otaDataState[i].trim().length >0) {
-					const otaState = otaDataState[i].split('{')[1].split(':')[0].split('"')[1];
-					statTuple.push(otaState);
-					otaDict.push(otaDataState[i].split('{')[1].split('}')[0]);
-				}
+			if (otaData.length === 0) {
+				wanchainLog('There is no  transaction input to OTA.', config.consoleColor.COLOR_FgRed);
+				return;
 			}
 
-			let otaDictStr = '{';
-			for (let i =0; i< otaDict.length; i++) {
-				otaDictStr += otaDict[i];
-				if (i !== otaDict.length -1) {
-					otaDictStr += ',';
-				}
-			}
-
-			otaDictStr += '}';
-
-			otaDictStr = JSON.parse(otaDictStr);
 
 			for (let i = 0; i<otaData.length; i++) {
 				const index = i +1;
@@ -85,6 +72,6 @@ prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
 			}
 		}
 	} catch (e) {
-		wanchainLog('Not have otaData.', config.consoleColor.COLOR_FgRed);
+		wanchainLog('There is no  transaction input to OTA.', config.consoleColor.COLOR_FgRed);
 	}
 });

@@ -75,8 +75,8 @@ function txt2json(otaData, otaDataState) {
 		console.log('Not have otaData.');
 	}
 
-	console.log('resultUndo: ', resultUndo);
-	console.log('resultTotal: ', resultTotal);
+	// console.log('resultUndo: ', resultUndo);
+	// console.log('resultTotal: ', resultTotal);
 
 	return [resultUndo, resultTotal];
 }

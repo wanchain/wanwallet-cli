@@ -1,23 +1,26 @@
 #!/usr/bin/env node
 var fs = require('fs');
 const Method = require("web3/lib/web3/method");
-const BN = require('bn.js');
 const secp256k1 = require('secp256k1');
 const Web3 = require("web3");
-
 var config = require('../config');
-var wanchainLog = require('./wanchainLog');
 let wanUtil = require('wanchain-util');
 var ethUtil = wanUtil.ethereumUtil;
+const Tx = wanUtil.ethereumTx;
+
 var web3 = new Web3(new Web3.providers.HttpProvider( config.host + ":8545"));
+
+
+web3.wan = new wanUtil.web3Wan(web3);
+
+const generatePubkeyIWQforRing = require('./generatePubkeyIWQforRing');
 
 let coinSCDefinition = wanUtil.coinSCAbi;
 var contractInstanceAddress = config.contractInstanceAddress;
-let fhs_buyCoinNote = ethUtil.sha3('buyCoinNote(string,uint256)', 256).slice(0,4).toString('hex');
 let contractCoinSC = web3.eth.contract(coinSCDefinition);
 let contractCoinInstance = contractCoinSC.at(contractInstanceAddress);
 
-function getTransactionReceipt(web3, txHash, ota)
+function getTransactionReceipt(txHash, ota)
 {
 	return new Promise(function(success,fail){
 		let filter = web3.eth.filter('latest');
@@ -26,7 +29,7 @@ function getTransactionReceipt(web3, txHash, ota)
 			if(err ){
 				var data = {};
 				data[ota] = 'Failed';
-				var log = fs.createWriteStream('./utils/otaData/otaDataState.txt', {'flags': 'a'});
+				var log = fs.createWriteStream('../src/otaData/otaDataState.txt', {'flags': 'a'});
 				log.end(JSON.stringify(data) + '\n');
 				console.log("err: "+err);
 			}else{
@@ -35,7 +38,7 @@ function getTransactionReceipt(web3, txHash, ota)
 				if(receipt){
 					var data = {};
 					data[ota] = 'Done';
-					var log = fs.createWriteStream('./utils/otaData/otaDataState.txt', {'flags': 'a'});
+					var log = fs.createWriteStream('../src/otaData/otaDataState.txt', {'flags': 'a'});
 					log.end(JSON.stringify(data) + '\n');
 					filter.stopWatching();
 					success(receipt);
@@ -43,7 +46,7 @@ function getTransactionReceipt(web3, txHash, ota)
 				}else if(blockAfter > 6){
 					var data = {};
 					data[ota] = 'Failed';
-					var log = fs.createWriteStream('./utils/otaData/otaDataState.txt', {'flags': 'a'});
+					var log = fs.createWriteStream('../src/otaData/otaDataState.txt', {'flags': 'a'});
 					log.end(JSON.stringify(data) + '\n');
 					fail("Get receipt timeout");
 				}
@@ -54,30 +57,7 @@ function getTransactionReceipt(web3, txHash, ota)
 
 
 
-/* set pubkey, w, q */
-function generatePubkeyIWQforRing(Pubs, I, w, q){
-    let length = Pubs.length;
-    let sPubs  = [];
-    for(let i=0; i<length; i++){
-        sPubs.push(Pubs[i].toString('hex'));
-    }
-    let ssPubs = sPubs.join('&');
-    let ssI = I.toString('hex');
-    let sw  = [];
-    for(let i=0; i<length; i++){
-        sw.push('0x'+w[i].toString('hex').replace(/(^0*)/g,""));
-    }
-    let ssw = sw.join('&');
-    let sq  = [];
-    for(let i=0; i<length; i++){
-        sq.push('0x'+q[i].toString('hex').replace(/(^0*)/g,""));
-    }
-    let ssq = sq.join('&');
-
-    let KWQ = [ssPubs,ssI,ssw,ssq].join('+');
-    return KWQ;
-}
-async function otaRefund(web3,ethUtil, Tx,address, privKeyA, otaSk, otaPubK, ringPubKs, value, ota) {
+async function otaRefund(address, privKeyA, otaSk, otaPubK, ringPubKs, value, ota) {
     let M = new Buffer(address,'hex');
     let ringArgs = ethUtil.getRingSign(M, otaSk,otaPubK,ringPubKs);
     if(!ethUtil.verifyRinSign(ringArgs)){
@@ -97,7 +77,7 @@ async function otaRefund(web3,ethUtil, Tx,address, privKeyA, otaSk, otaPubK, rin
     let KIWQ = generatePubkeyIWQforRing(ringArgs.PubKeys,ringArgs.I, ringArgs.w, ringArgs.q);
     let all = contractCoinInstance.refundCoin.getData(KIWQ,value);
 
-    var serial = '0x' + web3.eth.getTransactionCount(address).toString(16);
+    var serial = '0x' + web3.eth.getTransactionCount('0x' + address).toString(16);
     var rawTx = {
         Txtype: '0x00',
         nonce: serial,
@@ -115,11 +95,12 @@ async function otaRefund(web3,ethUtil, Tx,address, privKeyA, otaSk, otaPubK, rin
     let hash = web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
     console.log("serializeTx:" + serializedTx.toString('hex'));
     console.log('tx hash:'+hash);
-    let receipt = await getTransactionReceipt(web3, hash, ota);
+    let receipt = await getTransactionReceipt(hash, ota);
     console.log(receipt);
 }
 
-async function testRefund(web3,ethUtil, Tx, ota, value, privKeyA, privKeyB, address) {
+
+async function otaTransaction(ota, value, privKeyA, privKeyB, address) {
 
 		var getOTAMixSet = new Method({
 			name: 'getOTAMixSet',
@@ -146,7 +127,7 @@ async function testRefund(web3,ethUtil, Tx, ota, value, privKeyA, privKeyB, addr
     let otaSk = ethUtil.computeWaddrPrivateKey(ota, privKeyA,privKeyB);
     let otaPub = ethUtil.recoverPubkeyFromWaddress(ota);
 
-    await otaRefund(web3, ethUtil, Tx, address, privKeyA, otaSk,otaPub.A,otaSetBuf,value, ota);
+    await otaRefund(address, privKeyA, otaSk,otaPub.A,otaSetBuf,value, ota);
 }
 
-module.exports = testRefund;
+module.exports = otaTransaction;

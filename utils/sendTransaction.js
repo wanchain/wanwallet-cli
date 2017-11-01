@@ -33,15 +33,15 @@ async function sendTransaction(web3, Tx, receiver_address,sender_address, privKe
     	to: receiver_address,//contract address
 		value: value,
 	};
-	console.log("rawTx:", rawTx);
+	// console.log("rawTx:", rawTx);
 	var tx = new Tx(rawTx);
-	console.log(privKeyA);
+
 	tx.sign(privKeyA);
 	var serializedTx = tx.serialize();
 	let hash = web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
-	console.log("serializeTx: " + serializedTx.toString('hex'));
-	console.log('tx hash: '+hash);
+	// console.log("serializeTx: " + serializedTx.toString('hex'));
 
+	wanchainLog("tx hash: ", '\x1b[32m');
 	wanchainLog("waiting for ....", '\x1b[31m');
 
 	let receipt = await getTransactionReceipt(web3, hash);
