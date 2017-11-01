@@ -59,6 +59,8 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 				// console.log('privKeyA', privKeyA);
 				// console.log('privKeyB', privKeyB);
 
+				let index = 0;
+
 				try {
 					let tokenStateStr = fs.readFileSync('./otaData/tokenDataState.txt', "utf8");
 					let tokenStateData = tokenStateStr.split('\n');
@@ -68,101 +70,18 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 						let otaAddr = tokenStateDataJson.otaAddr;
 						let otaBalance = tokenStateDataJson.balance;
 
+						// console.log('address', address);
+						// console.log('myAddr', myAddr);
+
 						if (address === myAddr) {
+							index += 1;
 							wanchainLog("Token ota balance of " + otaAddr + " is " + otaBalance, config.consoleColor.COLOR_FgGreen);
-						} else {
-							wanchainLog('No token ota address', config.consoleColor.COLOR_FgYellow);
-							return;
 						}
-
-						wanchainLog('Input token ota address: ', config.consoleColor.COLOR_FgYellow);
-						prompt.get(require('../utils/schema/balanceSchema'), function (err, result) {
-							let inputAddress = result.balance;
-							let inpuitWaddress =  TokenInstance.otaKey(inputAddress);
-							let privateKey = ethUtil.computeWaddrPrivateKey(inpuitWaddress, privKeyA, privKeyB);
-
-
-							wanchainLog("Input waddress", config.consoleColor.COLOR_FgGreen);
-							prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
-								let token_to_waddr = result.waddress.slice(2);
-
-								try {
-									let stampStr = fs.readFileSync('./otaData/stampData.txt', 'utf8');
-									let stampTotal = stampStr.split('\n');
-
-									try{
-										let stampData = [];
-										for (let i=0; i<stampTotal.length; i++) {
-											if (stampTotal[i].length >0) {
-												if(JSON.parse(stampTotal[i]).address === keystore.address) {
-													stampData.push(stampTotal[i])
-												}
-											}
-										}
-
-										let stampDataStateStr = fs.readFileSync("./otaData/stampDataState.txt","utf8");
-										let stampDataState = stampDataStateStr.split('\n');
-
-										let stampDataUndo = stamp2json(stampData, stampDataState)[0];
-
-										for (let i = 0; i<stampDataUndo.length; i++) {
-											wanchainLog('address: 0x' + stampDataUndo[i].address + ' stamp: ' + stampDataUndo[i].stamp + ' value: ' + stampDataUndo[i].value + '\n', config.consoleColor.COLOR_FgYellow);
-										}
-
-										wanchainLog("Input stamp", config.consoleColor.COLOR_FgGreen);
-										prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
-											let stamp = result.waddress;
-
-											tokenOTAsend(TokenAddress, TokenInstance, stamp, otaBalance, token_to_waddr, keystoreAddr, privKeyA,privKeyB, myAddr, privateKey);
-
-										})
-
-									} catch (e) {
-										let stampData = [];
-										for (let i=0; i<stampTotal.length; i++) {
-											if (stampTotal[i].length >0) {
-												if(JSON.parse(stampTotal[i]).address === keystore.address) {
-													stampData.push(JSON.parse(stampTotal[i]));
-												}
-											}
-										}
-
-										for (let i=0; i<stampData.length; i++) {
-											wanchainLog('address: 0x' + stampData[i].address + ' stamp: ' + stampData[i].stamp + ' value: ' + stampData[i].value + '\n', config.consoleColor.COLOR_FgYellow);
-										}
-
-										wanchainLog("Input stamp", config.consoleColor.COLOR_FgGreen);
-										prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
-											let stamp = result.waddress;
-
-											tokenOTAsend(TokenAddress, TokenInstance, stamp, otaBalance, token_to_waddr, keystoreAddr, privKeyA,privKeyB, myAddr, privateKey);
-
-										})
-									}
-
-								} catch (e) {
-									wanchainLog('have not stampData.', config.consoleColor.COLOR_FgRed);
-								}
-							})
-						})
-
 					}
-				} catch (e) {
-					let tokenStr = fs.readFileSync('./otaData/tokenData.txt', "utf8");
-					let tokenData = tokenStr.split('\n');
-					for (let i=0; i<tokenData.length -1; i++) {
-						let tokenDataJson = JSON.parse(tokenData[i]);
-						let address = tokenDataJson.address;
-						var keystoreAddr = tokenDataJson.address.slice(2);
-						let otaAddr = tokenDataJson.otaAddr;
-						var otaBalance = tokenDataJson.balance;
 
-						if (address === myAddr) {
-							wanchainLog("Token ota balance of " + otaAddr + " is " + otaBalance, config.consoleColor.COLOR_FgGreen);
-						} else {
-							wanchainLog('No token ota address', config.consoleColor.COLOR_FgYellow);
-							return;
-						}
+					if (index === 0) {
+						wanchainLog('No token ota address', config.consoleColor.COLOR_FgYellow);
+						return;
 					}
 
 					wanchainLog('Input token ota address: ', config.consoleColor.COLOR_FgYellow);
@@ -235,7 +154,105 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 							}
 						})
 					})
+
+				} catch (e) {
+					let tokenStr = fs.readFileSync('./otaData/tokenData.txt', "utf8");
+					let tokenData = tokenStr.split('\n');
+					for (let i=0; i<tokenData.length -1; i++) {
+						let tokenDataJson = JSON.parse(tokenData[i]);
+						let address = tokenDataJson.address;
+						var keystoreAddr = tokenDataJson.address.slice(2);
+						let otaAddr = tokenDataJson.otaAddr;
+						var otaBalance = tokenDataJson.balance;
+
+						// console.log('address', address);
+						// console.log('myAddr', myAddr);
+
+						if (address === myAddr) {
+							index +=1;
+							wanchainLog("Token ota balance of " + otaAddr + " is " + otaBalance, config.consoleColor.COLOR_FgGreen);
+						}
+					}
+
+					if (index === 0) {
+						wanchainLog('No token ota address', config.consoleColor.COLOR_FgYellow);
+						return;
+					}
+
+					wanchainLog('Input token ota address: ', config.consoleColor.COLOR_FgYellow);
+					prompt.get(require('../utils/schema/balanceSchema'), function (err, result) {
+						let inputAddress = result.balance;
+						let inpuitWaddress =  TokenInstance.otaKey(inputAddress);
+						let privateKey = ethUtil.computeWaddrPrivateKey(inpuitWaddress, privKeyA, privKeyB);
+
+
+						wanchainLog("Input waddress", config.consoleColor.COLOR_FgGreen);
+						prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
+							let token_to_waddr = result.waddress.slice(2);
+
+							try {
+								let stampStr = fs.readFileSync('./otaData/stampData.txt', 'utf8');
+								let stampTotal = stampStr.split('\n');
+
+								try{
+									let stampData = [];
+									for (let i=0; i<stampTotal.length; i++) {
+										if (stampTotal[i].length >0) {
+											if(JSON.parse(stampTotal[i]).address === keystore.address) {
+												stampData.push(stampTotal[i])
+											}
+										}
+									}
+
+									let stampDataStateStr = fs.readFileSync("./otaData/stampDataState.txt","utf8");
+									let stampDataState = stampDataStateStr.split('\n');
+
+									let stampDataUndo = stamp2json(stampData, stampDataState)[0];
+
+									for (let i = 0; i<stampDataUndo.length; i++) {
+										wanchainLog('address: 0x' + stampDataUndo[i].address + ' stamp: ' + stampDataUndo[i].stamp + ' value: ' + stampDataUndo[i].value + '\n', config.consoleColor.COLOR_FgYellow);
+									}
+
+									wanchainLog("Input stamp", config.consoleColor.COLOR_FgGreen);
+									prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
+										let stamp = result.waddress;
+
+										tokenOTAsend(TokenAddress, TokenInstance, stamp, otaBalance, token_to_waddr, keystoreAddr, privKeyA,privKeyB, myAddr, privateKey);
+
+									})
+
+								} catch (e) {
+									let stampData = [];
+									for (let i=0; i<stampTotal.length; i++) {
+										if (stampTotal[i].length >0) {
+											if(JSON.parse(stampTotal[i]).address === keystore.address) {
+												stampData.push(JSON.parse(stampTotal[i]));
+											}
+										}
+									}
+
+									for (let i=0; i<stampData.length; i++) {
+										wanchainLog('address: 0x' + stampData[i].address + ' stamp: ' + stampData[i].stamp + ' value: ' + stampData[i].value + '\n', config.consoleColor.COLOR_FgYellow);
+									}
+
+									wanchainLog("Input stamp", config.consoleColor.COLOR_FgGreen);
+									prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
+										let stamp = result.waddress;
+
+										tokenOTAsend(TokenAddress, TokenInstance, stamp, otaBalance, token_to_waddr, keystoreAddr, privKeyA,privKeyB, myAddr, privateKey);
+
+									})
+								}
+
+							} catch (e) {
+								wanchainLog('have not stampData.', config.consoleColor.COLOR_FgRed);
+							}
+						})
+					})
+
 				}
+
+
 			} catch (e) {
 				wanchainLog('password invalid', config.consoleColor.COLOR_FgRed);
 			}
@@ -250,8 +267,8 @@ async function tokenOTAsend(TokenAddress, TokenInstance, stamp, value, token_to_
 	let token_to_ota =  ethUtil.generateOTAWaddress(token_to_waddr).toLowerCase();
 	let token_to_ota_a = ethUtil.recoverPubkeyFromWaddress(token_to_ota).A;
 	let token_to_ota_addr = "0x"+ethUtil.sha3(token_to_ota_a.slice(1)).slice(-20).toString('hex');
-	console.log("token_to_ota_addr: ",  token_to_ota_addr);
-	console.log("token_to_ota: ",token_to_ota);
+	// console.log("token_to_ota_addr: ",  token_to_ota_addr);
+	// console.log("token_to_ota: ",token_to_ota);
 	let cxtInterfaceCallData = TokenInstance.otatransfer.getData(token_to_ota_addr, token_to_ota, parseInt(value));
 
 	let otaSet = web3.wan.getOTAMixSet(stamp, 3);
@@ -326,8 +343,7 @@ function getTransactionReceipt(txHash, address, token_to_ota_addr, token_to_addr
 					let log = fs.createWriteStream('./otaData/stampDataState.txt', {'flags': 'a'});
 					log.end(JSON.stringify(data) + '\n');
 
-					let tokenData = {address: token_to_addr, otaAddr: token_to_ota_addr, balance: TokenInstance.otabalanceOf(token_to_ota_addr).toString(),
-						otaKey: TokenInstance.otaKey(token_to_ota_addr)};
+					let tokenData = {address: token_to_addr, otaAddr: token_to_ota_addr, balance: TokenInstance.otabalanceOf(token_to_ota_addr).toString()};
 					let tokenLog = fs.createWriteStream('./otaData/tokenData.txt', {'flags': 'a'});
 					tokenLog.end(JSON.stringify(tokenData) + '\n');
 
