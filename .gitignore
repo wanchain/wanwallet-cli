@@ -60,5 +60,5 @@ typings/
 test/
 .idea/
 *.txt
-
+keystore/*.json
 
