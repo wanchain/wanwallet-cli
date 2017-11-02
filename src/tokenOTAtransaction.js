@@ -23,7 +23,7 @@ web3.wan = new wanUtil.web3Wan(web3);
 // Start the prompt
 prompt.start();
 prompt.message = colors.blue("wanWallet");
-prompt.delimiter = colors.green("$");
+prompt.delimiter = colors.green(">>");
 
 wanchainLog('Input your keystore file name: ', config.consoleColor.COLOR_FgGreen);
 prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
@@ -31,7 +31,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 	try{
 		filename = "./keystore/" + result.OrdinaryKeystore + ".json";
 	} catch (e) {
-		wanchainLog('file name invalid (without file format)', config.consoleColor.COLOR_FgRed);
+		wanchainLog('File name invalid (ignore file extension)', config.consoleColor.COLOR_FgRed);
 		return;
 	}
 

@@ -16,7 +16,7 @@ web3.wan = new wanUtil.web3Wan(web3);
 // Start the prompt
 prompt.start();
 prompt.message = colors.blue("wanWallet");
-prompt.delimiter = colors.green("$");
+prompt.delimiter = colors.green(">>");
 
 wanchainLog("Input waddress", config.consoleColor.COLOR_FgGreen);
 prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
