@@ -36,7 +36,7 @@ function A2OTA(keystoreStr) {
 			const weiToEth = checkBalance(web3, address);
 
 			if (weiToEth === '0') {
-				wanchainLog('the address balance is 0 eth, pls recharge first.', config.consoleColor.COLOR_FgRed);
+				wanchainLog('This address balance is 0 eth, pls recharge first.', config.consoleColor.COLOR_FgRed);
 			} else {
 				wanchainLog('Your wallet has been unlocked. Would you want to send a transaction? (y[Y]/n[N])', config.consoleColor.COLOR_FgGreen);
 
@@ -50,7 +50,7 @@ function A2OTA(keystoreStr) {
 								const to_waddress = result.waddress.slice(2);
 
 								wanchainLog('Input value(eth): ', config.consoleColor.COLOR_FgGreen);
-								prompt.get(require('../schema/theValue'), function (err, result) {
+								prompt.get(require('../schema/privacyValue'), function (err, result) {
 
 									let contractInstanceAddress = config.contractInstanceAddress;
 									let contractCoinSC = web3.eth.contract(coinSCDefinition);

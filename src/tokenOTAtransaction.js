@@ -17,6 +17,7 @@ const web3 = new Web3(new Web3.providers.HttpProvider( config.host + ":8545"));
 const wanchainLog = require('../utils/wanchainLog');
 const stamp2json = require('../utils/stamp2json');
 const tokenOTAsend = require('../utils/tokenOTAsend');
+const tokenTransfer = require('../utils/tokenTransferFunc');
 
 web3.wan = new wanUtil.web3Wan(web3);
 
@@ -28,14 +29,15 @@ prompt.delimiter = colors.green(">>");
 wanchainLog('Input your keystore file name: ', config.consoleColor.COLOR_FgGreen);
 prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 	let filename;
+	let keystoreStr;
 	try{
 		filename = "./keystore/" + result.OrdinaryKeystore + ".json";
+		keystoreStr = fs.readFileSync(filename, "utf8");
 	} catch (e) {
 		wanchainLog('File name invalid (ignore file extension)', config.consoleColor.COLOR_FgRed);
 		return;
 	}
 
-	let keystoreStr = fs.readFileSync(filename, "utf8");
 	let keystore = JSON.parse(keystoreStr)[1];
 	keystore.address = keystore.address.slice(2);
 	keystore.waddress = keystore.waddress.slice(2);
@@ -71,18 +73,36 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 		}
 
 		let index = 0;
+		let tokenStr;
+		try{
+			tokenStr = fs.readFileSync('./otaData/tokenData.txt', "utf8");
+			tokenStr = tokenStr.split('\n');
+		} catch (e) {
+			wanchainLog('No ota data', config.consoleColor.COLOR_FgRed);
+			return;
+		}
 
-		let tokenStr = fs.readFileSync('./otaData/tokenData.txt', "utf8");
-		let tokenData = tokenStr.split('\n');
-		for (let i=0; i<tokenData.length -1; i++) {
-			let tokenDataJson = JSON.parse(tokenData[i]);
-			let address = tokenDataJson.address;
+		let data={};
+		try{
+			let tokenOtaStr = fs.readFileSync('./otaData/tokenOTAdata.txt', "utf8");
+			tokenOtaStr = tokenOtaStr.split('\n');
+			data.token = tokenStr;
+			data.ota = tokenOtaStr;
+		} catch (e) {
+			data.token = tokenStr;
+		}
+		let tokenData = tokenTransfer(data);
+
+		for (let i=0; i<tokenData.length; i++) {
+			let tokenDataJson = tokenData[i];
+			let sender = tokenDataJson.sender;
+			let receiver = tokenDataJson.receiver;
 			let otaAddr = tokenDataJson.otaAddr;
 			var otaBalance = tokenDataJson.balance;
 
-			if (address === myAddr) {
+			if (receiver === myAddr) {
 				index +=1;
-				wanchainLog("Token ota balance of " + otaAddr + " is " + otaBalance, config.consoleColor.COLOR_FgGreen);
+				wanchainLog("ota address: " + otaAddr + " balance: " + otaBalance, config.consoleColor.COLOR_FgGreen);
 			}
 		}
 
@@ -104,7 +124,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 					stampStr = fs.readFileSync('./otaData/stampData.txt', 'utf8');
 				}
 				catch (e) {
-					wanchainLog('No stampData.', config.consoleColor.COLOR_FgRed);
+					wanchainLog('No stamp data.', config.consoleColor.COLOR_FgRed);
 					return;
 				}
 
@@ -119,7 +139,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 				}
 
 				if (stampData.length === 0) {
-					wanchainLog('No stampData.', config.consoleColor.COLOR_FgRed);
+					wanchainLog('No stamp data.', config.consoleColor.COLOR_FgRed);
 					return;
 				}
 
@@ -131,6 +151,11 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 					stampDataUndo = stamp2json(stampData, stampDataState)[0];
 				} catch (e) {
 					stampDataUndo = stampData;
+				}
+
+				if (stampDataUndo.length === 0) {
+					wanchainLog('No stamp data.', config.consoleColor.COLOR_FgRed);
+					return;
 				}
 
 				for (let i = 0; i<stampDataUndo.length; i++) {
@@ -161,7 +186,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 					otaKey.address =token_to_ota_addr;
 					otaKey.privKeyA = privateKey;
 
-					tokenOTAsend(TokenAddress, TokenInstance, token_to_ota_addr3, token_to_ota3, stamp, account2, otaKey, parseInt(otaBalance), receiver_addr)
+					tokenOTAsend(TokenAddress, TokenInstance, token_to_ota_addr3, token_to_ota3, stamp, account2, otaKey, parseInt(otaBalance), myAddr, receiver_addr)
 				})
 			})
 		})

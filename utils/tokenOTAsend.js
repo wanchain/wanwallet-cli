@@ -14,7 +14,7 @@ const generatePubkeyIWQforRing = require('./generatePubkeyIWQforRing');
 web3.wan = new wanUtil.web3Wan(web3);
 
 
-async function  tokenOTAsend(TokenAddress, TokenInstance, token_to_ota_addr, token_to_ota, stamp, stampHoderKeystore, tokenHoderKeystore, value, receiver_addr) {
+async function  tokenOTAsend(TokenAddress, TokenInstance, token_to_ota_addr, token_to_ota, stamp, stampHoderKeystore, tokenHoderKeystore, value, myAddr, receiver_addr) {
 	let cxtInterfaceCallData = TokenInstance.otatransfer.getData(token_to_ota_addr, token_to_ota, value);
 
 	let otaSet = web3.wan.getOTAMixSet(stamp, 3);
@@ -25,7 +25,7 @@ async function  tokenOTAsend(TokenAddress, TokenInstance, token_to_ota_addr, tok
 		otaSetBuf.push(rpcu);
 	}
 
-	// console.log("fetch  ota stamp set: ",otaSet);
+	console.log("fetch  ota stamp set: ",otaSet);
 	let otaSk = ethUtil.computeWaddrPrivateKey(stamp, stampHoderKeystore.privKeyA,stampHoderKeystore.privKeyB);
 	let otaPub = ethUtil.recoverPubkeyFromWaddress(stamp);
 
@@ -49,22 +49,22 @@ async function  tokenOTAsend(TokenAddress, TokenInstance, token_to_ota_addr, tok
 		value: '0x00',
 		data: combinedData
 	};
-	// console.log("payload: " + rawTx.data.toString('hex'));
+	console.log("payload: " + rawTx.data.toString('hex'));
 
 	var tx = new Tx(rawTx);
 	tx.sign(tokenHoderKeystore.privKeyA);
 	var serializedTx = tx.serialize();
 	let hash = web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
-	// console.log("serializeTx:" + serializedTx.toString('hex'));
-	console.log('Tx hash:'+hash);
-	let receipt = await getTransactionReceipt(hash, stamp, token_to_ota_addr, receiver_addr, TokenInstance);
+	console.log("serializeTx:" + serializedTx.toString('hex'));
+	console.log('tx hash:'+hash);
+	let receipt = await getTransactionReceipt(hash, stamp, token_to_ota_addr, tokenHoderKeystore.address, myAddr, receiver_addr, TokenInstance);
 	console.log(receipt);
 	console.log("Token balance of ",token_to_ota_addr, " is ", TokenInstance.otabalanceOf(token_to_ota_addr).toString(), "key is ", TokenInstance.otaKey(token_to_ota_addr));
 
 }
 
 
-function getTransactionReceipt(txHash, address, token_to_ota_addr, token_to_addr, TokenInstance)
+function getTransactionReceipt(txHash, address, token_to_ota_addr, token_to_addr, myAddr, receiver_addr, TokenInstance)
 {
 	return new Promise(function(success,fail){
 		let filter = web3.eth.filter('latest');
@@ -82,9 +82,12 @@ function getTransactionReceipt(txHash, address, token_to_ota_addr, token_to_addr
 					let log = fs.createWriteStream('../src/otaData/stampDataState.txt', {'flags': 'a'});
 					log.end(JSON.stringify(data) + '\n');
 
-					let tokenData = {address: token_to_addr, otaAddr: token_to_ota_addr, balance: TokenInstance.otabalanceOf(token_to_ota_addr).toString()};
-					let tokenLog = fs.createWriteStream('../src/otaData/tokenData.txt', {'flags': 'a'});
-					tokenLog.end(JSON.stringify(tokenData) + '\n');
+					let tokenLog = fs.createWriteStream('../src/otaData/tokenOTAdata.txt', {'flags': 'a'});
+					tokenLog.end(JSON.stringify(token_to_addr) + '\n');
+
+					let tokenData = {sender: myAddr, receiver: receiver_addr, otaAddr: token_to_ota_addr, balance: TokenInstance.otabalanceOf(token_to_ota_addr).toString()};
+					let tokenOtaLog = fs.createWriteStream('../src/otaData/tokenData.txt', {'flags': 'a'});
+					tokenOtaLog.end(JSON.stringify(tokenData) + '\n');
 
 					filter.stopWatching();
 					success(receipt);

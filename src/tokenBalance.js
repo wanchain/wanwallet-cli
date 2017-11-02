@@ -8,8 +8,9 @@ const wanUtil = require('wanchain-util');
 const path = require('path');
 const solc = require('solc');
 
-
 const wanchainLog = require('../utils/wanchainLog');
+const tokenBalanceFunc = require('../utils/tokenBalanceFunc');
+
 const config = require('../config');
 
 const web3 = new Web3(new Web3.providers.HttpProvider( config.host + ":8545"));
@@ -34,20 +35,38 @@ prompt.get(require('../utils/schema/balanceSchema'), function (err, result) {
 
 	wanchainLog("Token balance of " + result.balance + " is " + balance, config.consoleColor.COLOR_FgGreen);
 
+	let data={};
+	data.address = result.balance;
+	let tokenData;
 	try{
 		let tokenStr = fs.readFileSync('./otaData/tokenData.txt', "utf8");
-		let tokenData = tokenStr.split('\n');
-
-		for (let i=0; i<tokenData.length -1; i++) {
-			let tokenJson = JSON.parse(tokenData[i]);
-
-			if (tokenJson.address === result.balance) {
-				wanchainLog("Token ota balance of " + tokenJson.address + " is " + tokenJson.balance, config.consoleColor.COLOR_FgGreen);
-			}
-		}
+		tokenData = tokenStr.split('\n');
 
 	} catch (e) {
 		wanchainLog("No token ota", config.consoleColor.COLOR_FgGreen);
+		return;
 	}
+
+	let otaData;
+	try{
+		let otaStr = fs.readFileSync('./otaData/tokenOTAdata.txt', "utf8");
+		otaData = otaStr.split('\n');
+
+		data.token = tokenData;
+		data.ota = otaData;
+	} catch (e) {
+		data.token = tokenData;
+	}
+
+	let resultData = tokenBalanceFunc(data);
+
+	if (resultData.length >0) {
+		for (let i=0; i<resultData.length -1; i++) {
+			wanchainLog("Token ota balance of " + resultData.address + " is " + resultData.otaAddr, config.consoleColor.COLOR_FgGreen);
+		}
+	}  else {
+		wanchainLog("No token ota", config.consoleColor.COLOR_FgGreen);
+	}
+
 
 });

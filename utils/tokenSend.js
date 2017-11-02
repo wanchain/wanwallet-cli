@@ -67,13 +67,13 @@ async function tokenSend(TokenAddress, TokenInstance, stamp, value, token_to_wad
 
 	let keystore_a = ethUtil.recoverPubkeyFromWaddress(token_to_waddr).A;
 	let token_to_addr = "0x"+ethUtil.sha3(keystore_a.slice(1)).slice(-20).toString('hex');
-	let receipt = await getTransactionReceipt(hash, stamp, token_to_ota_addr, token_to_addr, TokenInstance);
+	let receipt = await getTransactionReceipt(hash, stamp, token_to_ota_addr, token_to_addr, TokenInstance, myAddr);
 	console.log(receipt);
 	console.log("Token balance of ",token_to_ota_addr, " is ", TokenInstance.otabalanceOf(token_to_ota_addr).toString(), "key is ", TokenInstance.otaKey(token_to_ota_addr));
 
 }
 
-function getTransactionReceipt(txHash, address, token_to_ota_addr, token_to_addr, TokenInstance)
+function getTransactionReceipt(txHash, address, token_to_ota_addr, token_to_addr, TokenInstance, myAddr)
 {
 	return new Promise(function(success,fail){
 		let filter = web3.eth.filter('latest');
@@ -91,7 +91,7 @@ function getTransactionReceipt(txHash, address, token_to_ota_addr, token_to_addr
 					let log = fs.createWriteStream('../src/otaData/stampDataState.txt', {'flags': 'a'});
 					log.end(JSON.stringify(data) + '\n');
 
-					let tokenData = {address: token_to_addr, otaAddr: token_to_ota_addr, balance: TokenInstance.otabalanceOf(token_to_ota_addr).toString()};
+					let tokenData = {sender: myAddr, receiver: token_to_addr, otaAddr: token_to_ota_addr, balance: TokenInstance.otabalanceOf(token_to_ota_addr).toString()};
 					let tokenLog = fs.createWriteStream('../src/otaData/tokenData.txt', {'flags': 'a'});
 					tokenLog.end(JSON.stringify(tokenData) + '\n');
 

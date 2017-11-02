@@ -22,7 +22,14 @@ prompt.get(require('../utils/schema/ordinaryAddr'), function (err, result) {
 
 	let address = result.address.slice(2);
 
-	let stampDataStr = fs.readFileSync("./otaData/stampData.txt","utf8");
+	let stampDataStr;
+	try {
+		stampDataStr = fs.readFileSync("./otaData/stampData.txt","utf8");
+	} catch (e) {
+		wanchainLog('No ota data.', config.consoleColor.COLOR_FgRed);
+
+	}
+
 	let stampDataTotal = stampDataStr.split('\n');
 
 	let otaData = [];
@@ -35,7 +42,7 @@ prompt.get(require('../utils/schema/ordinaryAddr'), function (err, result) {
 	}
 
 	if (otaData.length === 0) {
-		wanchainLog('Not have otaData.', config.consoleColor.COLOR_FgRed);
+		wanchainLog('No ota data.', config.consoleColor.COLOR_FgRed);
 		return;
 	}
 
@@ -69,6 +76,6 @@ prompt.get(require('../utils/schema/ordinaryAddr'), function (err, result) {
 			}
 		}
 	} catch (e) {
-		wanchainLog('Not have otaData.', config.consoleColor.COLOR_FgRed);
+		wanchainLog('No ota data.', config.consoleColor.COLOR_FgRed);
 	}
 });
