@@ -25,7 +25,7 @@ function OTA2B(prompt, keythereum, keystoreStr) {
 			let address = keystore.address;
 			let waddress = keystore.waddress;
 
-			wanchainLog('Your wallet has been unlocked. Would you want to send a transaction?', config.consoleColor.COLOR_FgGreen);
+			wanchainLog('Your wallet has been unlocked. Would you want to send a transaction? (y[Y]/n[N])', config.consoleColor.COLOR_FgGreen);
 
 			prompt.get(require('../schema/isTransaction'), function (err, result) {
 				var theState = result.state.toLowerCase();
@@ -60,7 +60,7 @@ function OTA2B(prompt, keythereum, keystoreStr) {
 									wanchainLog(index + '. ' + 'ota: ' + otaDataUndo[i].ota + ' value: ' + otaDataUndo[i].value + '\n', config.consoleColor.COLOR_FgYellow);
 								}
 
-								wanchainLog('input ota ', config.consoleColor.COLOR_FgGreen);
+								wanchainLog('Input ota ', config.consoleColor.COLOR_FgGreen);
 								prompt.get(require('../schema/privacyAddr'), function (err, result) {
 									let ota = result.waddress;
 									let checkState = checkOTAvalue(ota, otaDataUndo);

@@ -36,8 +36,8 @@ async function tokenInit(address, waddress, privKeyA) {
 	var serializedTx = tx.serialize();
 	let hash = web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
 	// console.log("serializeTx:" + serializedTx.toString('hex'));
-	console.log('tx hash:'+hash);
-	wanchainLog('waiting for a moment...', config.consoleColor.COLOR_FgRed);
+	console.log('Tx hash:'+hash);
+	wanchainLog('Waiting for a moment...', config.consoleColor.COLOR_FgRed);
 
 	let receipt = await getTransactionReceipt(hash);
 	console.log(receipt);

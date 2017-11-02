@@ -21,14 +21,14 @@ prompt.start();
 prompt.message = colors.blue("wanWallet");
 prompt.delimiter = colors.green("$");
 
-let TokenAddress = fs.readFileSync("ERC20.addr","utf8");
-let content = fs.readFileSync(path.join("../sol", "ERC20.sol"), 'utf8');
-let compiled = solc.compile(content, 1);
-let privacyContract = web3.eth.contract(JSON.parse(compiled.contracts[':ERC20'].interface));
-let TokenInstance = privacyContract.at(TokenAddress);
-
 wanchainLog("Input address", config.consoleColor.COLOR_FgGreen);
 prompt.get(require('../utils/schema/balanceSchema'), function (err, result) {
+
+	let TokenAddress = fs.readFileSync("ERC20.addr","utf8");
+	let content = fs.readFileSync(path.join("../sol", "ERC20.sol"), 'utf8');
+	let compiled = solc.compile(content, 1);
+	let privacyContract = web3.eth.contract(JSON.parse(compiled.contracts[':ERC20'].interface));
+	let TokenInstance = privacyContract.at(TokenAddress);
 
 	let balance = TokenInstance.otabalanceOf(result.balance).toString();
 
@@ -38,28 +38,14 @@ prompt.get(require('../utils/schema/balanceSchema'), function (err, result) {
 		let tokenStr = fs.readFileSync('./otaData/tokenData.txt', "utf8");
 		let tokenData = tokenStr.split('\n');
 
-		let otaIn = [];
-		let otaTotal = [];
-
 		for (let i=0; i<tokenData.length -1; i++) {
-			var tokenDataJson = JSON.parse(tokenData[i]);
-			var address = tokenDataJson.address;
+			let tokenJson = JSON.parse(tokenData[i]);
 
-			let data = {};
-			if (address === result.balance) {
-				data.address = tokenDataJson.otaAddr;
-				data.value = tokenDataJson.balance;
-				otaTotal.push(data);
-			} else {
-				otaIn.push(address);
+			if (tokenJson.address === result.balance) {
+				wanchainLog("Token ota balance of " + tokenJson.address + " is " + tokenJson.balance, config.consoleColor.COLOR_FgGreen);
 			}
 		}
 
-		for (var i =0; i<otaTotal.length; i++) {
-			if (otaIn.indexOf(otaTotal[i].address) <0 ) {
-				wanchainLog("Token ota balance of " + otaTotal[i].address + " is " + otaTotal[i].value, config.consoleColor.COLOR_FgGreen);
-			}
-		}
 	} catch (e) {
 		wanchainLog("No token ota", config.consoleColor.COLOR_FgGreen);
 	}

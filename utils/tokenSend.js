@@ -19,8 +19,8 @@ async function tokenSend(TokenAddress, TokenInstance, stamp, value, token_to_wad
 	let token_to_ota =  ethUtil.generateOTAWaddress(token_to_waddr).toLowerCase();
 	let token_to_ota_a = ethUtil.recoverPubkeyFromWaddress(token_to_ota).A;
 	let token_to_ota_addr = "0x"+ethUtil.sha3(token_to_ota_a.slice(1)).slice(-20).toString('hex');
-	console.log("token_to_ota_addr: ",  token_to_ota_addr);
-	console.log("token_to_ota: ",token_to_ota);
+	// console.log("token_to_ota_addr: ",  token_to_ota_addr);
+	// console.log("token_to_ota: ",token_to_ota);
 	let cxtInterfaceCallData = TokenInstance.otatransfer.getData(token_to_ota_addr, token_to_ota, parseInt(value));
 
 	let otaSet = web3.wan.getOTAMixSet(stamp, 3);
@@ -62,7 +62,7 @@ async function tokenSend(TokenAddress, TokenInstance, stamp, value, token_to_wad
 	var serializedTx = tx.serialize();
 	let hash = web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
 	// console.log("serializeTx:" + serializedTx.toString('hex'));
-	console.log('tx hash: '+hash);
+	console.log('Tx hash: '+hash);
 	wanchainLog("Waiting for a moment...", config.consoleColor.COLOR_FgGreen);
 
 	let keystore_a = ethUtil.recoverPubkeyFromWaddress(token_to_waddr).A;

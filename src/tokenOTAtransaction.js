@@ -43,7 +43,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 
 	wanchainLog('Pls input your password to unlock your wallet', config.consoleColor.COLOR_FgGreen);
 	prompt.get(require('../utils/schema/keyPassword'), function (err, result) {
-		wanchainLog('waiting for unlock wallet....', config.consoleColor.COLOR_FgRed);
+		wanchainLog('Waiting for unlock wallet....', config.consoleColor.COLOR_FgRed);
 
 		let content = fs.readFileSync(path.join("../sol", "ERC20.sol"), 'utf8');
 		let compiled = solc.compile(content, 1);
@@ -66,7 +66,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 			myAddr = '0x'+keystore.address;
 		}
 		catch (e) {
-			wanchainLog('password invalid', config.consoleColor.COLOR_FgRed);
+			wanchainLog('Password invalid', config.consoleColor.COLOR_FgRed);
 			return;
 		}
 
@@ -95,7 +95,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 		prompt.get(require('../utils/schema/balanceSchema'), function (err, result) {
 			let token_to_ota_addr = result.balance;
 
-			wanchainLog("Input waddress", config.consoleColor.COLOR_FgGreen);
+			wanchainLog("Input receiver's waddress", config.consoleColor.COLOR_FgGreen);
 			prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
 				let token_to_waddr = result.waddress.slice(2);
 
@@ -104,7 +104,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 					stampStr = fs.readFileSync('./otaData/stampData.txt', 'utf8');
 				}
 				catch (e) {
-					wanchainLog('have not stampData.', config.consoleColor.COLOR_FgRed);
+					wanchainLog('No stampData.', config.consoleColor.COLOR_FgRed);
 					return;
 				}
 
@@ -119,7 +119,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 				}
 
 				if (stampData.length === 0) {
-					wanchainLog('have not stampData.', config.consoleColor.COLOR_FgRed);
+					wanchainLog('No stampData.', config.consoleColor.COLOR_FgRed);
 					return;
 				}
 
@@ -148,6 +148,9 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 					let token_to_ota3 =  ethUtil.generateOTAWaddress(token_to_waddr).toLowerCase();
 					let token_to_ota_a3 = ethUtil.recoverPubkeyFromWaddress(token_to_ota3).A;
 					let token_to_ota_addr3 = "0x"+ethUtil.sha3(token_to_ota_a3.slice(1)).slice(-20).toString('hex');
+
+					let receiver_waddr = ethUtil.recoverPubkeyFromWaddress(token_to_waddr).A;
+					let receiver_addr = "0x"+ethUtil.sha3(receiver_waddr.slice(1)).slice(-20).toString('hex');
 					// console.log("token_to_ota_addr2:",  token_to_ota_addr3);
 					// console.log("token_to_ota2:",token_to_ota3);
 
@@ -158,7 +161,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 					otaKey.address =token_to_ota_addr;
 					otaKey.privKeyA = privateKey;
 
-					tokenOTAsend(TokenAddress, TokenInstance, token_to_ota_addr3, token_to_ota3, stamp, account2, otaKey, parseInt(otaBalance))
+					tokenOTAsend(TokenAddress, TokenInstance, token_to_ota_addr3, token_to_ota3, stamp, account2, otaKey, parseInt(otaBalance), receiver_addr)
 				})
 			})
 		})

@@ -23,11 +23,11 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 		let keystoreStr = fs.readFileSync(filename, "utf8");
 
 		let keystore = JSON.parse(keystoreStr)[1];
-		console.log('you keystore: ', keystore);
+		console.log('Your keystore: ', keystore);
 
 		wanchainLog('Pls input your password to unlock your wallet', config.consoleColor.COLOR_FgGreen);
 		prompt.get(require('../utils/schema/keyPassword'), function (err, result) {
-			wanchainLog('waiting for unlock wallet....', config.consoleColor.COLOR_FgRed);
+			wanchainLog('Waiting for unlock wallet....', config.consoleColor.COLOR_FgRed);
 
 			let keyAObj = {version:keystore.version, crypto:keystore.crypto};
 
@@ -39,11 +39,11 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 			 	tokenInit(address, waddress, privKeyA);
 
 			} catch (e) {
-				wanchainLog('password invalid', config.consoleColor.COLOR_FgRed);
+				wanchainLog('Password invalid', config.consoleColor.COLOR_FgRed);
 			}
 		});
 	} catch (e) {
-		wanchainLog('file name invalid (without file format)', config.consoleColor.COLOR_FgRed);
+		wanchainLog('File name invalid (without file format)', config.consoleColor.COLOR_FgRed);
 	}
 });
 

@@ -24,7 +24,7 @@ async function buyStamp(privateKey,fromaddress, toWaddr, value){
 	var stamp = ethUtil.generateOTAWaddress(toWaddr).toLowerCase();
 	let payload = contractStampInstance.buyStamp.getData(stamp, value);
 	var serial = '0x' + web3.eth.getTransactionCount(fromaddress).toString(16);
-	console.log('serial: ', serial);
+
 	var rawTx = {
 		Txtype: '0x0',
 		nonce: serial,
@@ -34,15 +34,15 @@ async function buyStamp(privateKey,fromaddress, toWaddr, value){
 		value: value,
 		data: payload
 	};
-	console.log("payload: " + rawTx.data);
-	console.log("tx: ",rawTx);
+	// console.log("payload: " + rawTx.data);
+	// console.log("tx: ",rawTx);
 	var tx = new Tx(rawTx);
 	tx.sign(privateKey);
 	var serializedTx = tx.serialize();
 	let hash = web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
 
-	wanchainLog('serializeTx: ' + serializedTx.toString('hex'), config.consoleColor.COLOR_FgGreen);
-	wanchainLog('tx hash: ' + hash, config.consoleColor.COLOR_FgRed);
+	// wanchainLog('serializeTx: ' + serializedTx.toString('hex'), config.consoleColor.COLOR_FgGreen);
+	wanchainLog('Tx hash: ' + hash, config.consoleColor.COLOR_FgRed);
 	wanchainLog('Waiting for a moment...', config.consoleColor.COLOR_FgRed);
 
 	let receipt = await getTransactionReceipt(hash);
@@ -51,8 +51,8 @@ async function buyStamp(privateKey,fromaddress, toWaddr, value){
 	let log = fs.createWriteStream('../src/otaData/stampData.txt', {'flags': 'a'});
 	log.end(JSON.stringify(data) + '\n');
 
-	wanchainLog('receipt: ' + JSON.stringify(receipt), config.consoleColor.COLOR_FgGreen);
-	console.log("you have got a stamp, address and value are: ",stamp, web3.wan.getOTABalance(stamp));
+	wanchainLog('Receipt: ' + JSON.stringify(receipt), config.consoleColor.COLOR_FgGreen);
+	console.log("You have got a stamp, address and value are: ",stamp, web3.wan.getOTABalance(stamp));
 
 }
 
