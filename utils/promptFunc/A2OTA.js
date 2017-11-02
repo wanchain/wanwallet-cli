@@ -21,7 +21,7 @@ prompt.delimiter = colors.green(">>");
 
 function A2OTA(keystoreStr) {
 	let keystore = JSON.parse(keystoreStr)[1];
-	console.log('you keystore: ', keystore);
+	console.log('Your keystore: ', keystore);
 
 	wanchainLog('Pls input your password to unlock your wallet', config.consoleColor.COLOR_FgGreen);
 	prompt.get(require('../schema/keyPassword'), function (err, result) {
@@ -69,7 +69,7 @@ function A2OTA(keystoreStr) {
 				});
 			}
 		} catch (e) {
-			wanchainLog('password invalid', config.consoleColor.COLOR_FgRed);
+			wanchainLog('Password invalid', config.consoleColor.COLOR_FgRed);
 		}
 	});
 }
