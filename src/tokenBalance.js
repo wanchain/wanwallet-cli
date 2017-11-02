@@ -37,12 +37,27 @@ prompt.get(require('../utils/schema/balanceSchema'), function (err, result) {
 	try{
 		let tokenStr = fs.readFileSync('./otaData/tokenData.txt', "utf8");
 		let tokenData = tokenStr.split('\n');
+
+		let otaIn = [];
+		let otaTotal = [];
+
 		for (let i=0; i<tokenData.length -1; i++) {
 			var tokenDataJson = JSON.parse(tokenData[i]);
 			var address = tokenDataJson.address;
 
+			let data = {};
 			if (address === result.balance) {
-				wanchainLog("Token ota balance of " + tokenDataJson.otaAddr + " is " + tokenDataJson.balance, config.consoleColor.COLOR_FgGreen);
+				data.address = tokenDataJson.otaAddr;
+				data.value = tokenDataJson.balance;
+				otaTotal.push(data);
+			} else {
+				otaIn.push(address);
+			}
+		}
+
+		for (var i =0; i<otaTotal.length; i++) {
+			if (otaIn.indexOf(otaTotal[i].address) <0 ) {
+				wanchainLog("Token ota balance of " + otaTotal[i].address + " is " + otaTotal[i].value, config.consoleColor.COLOR_FgGreen);
 			}
 		}
 	} catch (e) {

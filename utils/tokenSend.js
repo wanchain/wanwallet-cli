@@ -80,10 +80,6 @@ function getTransactionReceipt(txHash, address, token_to_ota_addr, token_to_addr
 		let blockAfter = 0;
 		filter.watch(function(err,blockhash){
 			if(err ){
-				let data = {};
-				data[address] = 'Failed';
-				let log = fs.createWriteStream('../src/otaData/stampDataState.txt', {'flags': 'a'});
-				log.end(JSON.stringify(data) + '\n');
 				console.log("err:"+err);
 				fail("err:"+err);
 			}else{
@@ -103,10 +99,6 @@ function getTransactionReceipt(txHash, address, token_to_ota_addr, token_to_addr
 					success(receipt);
 					return receipt;
 				}else if(blockAfter > 6){
-					let data = {};
-					data[address] = 'Failed';
-					let log = fs.createWriteStream('../src/otaData/stampDataState.txt', {'flags': 'a'});
-					log.end(JSON.stringify(data) + '\n');
 					fail("Get receipt timeout");
 				}
 			}
