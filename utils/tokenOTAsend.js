@@ -25,7 +25,7 @@ async function  tokenOTAsend(TokenAddress, TokenInstance, token_to_ota_addr, tok
 		otaSetBuf.push(rpcu);
 	}
 
-	console.log("fetch  ota stamp set: ",otaSet);
+	// console.log("fetch  ota stamp set: ",otaSet);
 	let otaSk = ethUtil.computeWaddrPrivateKey(stamp, stampHoderKeystore.privKeyA,stampHoderKeystore.privKeyB);
 	let otaPub = ethUtil.recoverPubkeyFromWaddress(stamp);
 
@@ -49,14 +49,15 @@ async function  tokenOTAsend(TokenAddress, TokenInstance, token_to_ota_addr, tok
 		value: '0x00',
 		data: combinedData
 	};
-	console.log("payload: " + rawTx.data.toString('hex'));
+	// console.log("payload: " + rawTx.data.toString('hex'));
 
 	var tx = new Tx(rawTx);
 	tx.sign(tokenHoderKeystore.privKeyA);
 	var serializedTx = tx.serialize();
 	let hash = web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
-	console.log("serializeTx:" + serializedTx.toString('hex'));
+	// console.log("serializeTx:" + serializedTx.toString('hex'));
 	console.log('tx hash:'+hash);
+	wanchainLog("Waiting for a moment...", config.consoleColor.COLOR_FgRed);
 	let receipt = await getTransactionReceipt(hash, stamp, token_to_ota_addr, tokenHoderKeystore.address, myAddr, receiver_addr, TokenInstance);
 	console.log(receipt);
 	console.log("Token balance of ",token_to_ota_addr, " is ", TokenInstance.otabalanceOf(token_to_ota_addr).toString(), "key is ", TokenInstance.otaKey(token_to_ota_addr));

@@ -61,8 +61,8 @@ prompt.get(require('../utils/schema/balanceSchema'), function (err, result) {
 	let resultData = tokenBalanceFunc(data);
 
 	if (resultData.length >0) {
-		for (let i=0; i<resultData.length -1; i++) {
-			wanchainLog("Token ota balance of " + resultData.address + " is " + resultData.otaAddr, config.consoleColor.COLOR_FgGreen);
+		for (let i=0; i<resultData.length; i++) {
+			wanchainLog("Token ota balance of " + resultData[i].otaAddr + " is " + resultData[i].balance, config.consoleColor.COLOR_FgGreen);
 		}
 	}  else {
 		wanchainLog("No token ota", config.consoleColor.COLOR_FgGreen);
