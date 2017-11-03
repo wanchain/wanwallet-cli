@@ -1,26 +1,4 @@
-
-function getTransactionReceipt(web3, txHash)
-{
-	return new Promise(function(success,fail){
-		let filter = web3.eth.filter('latest');
-		let blockAfter = 0;
-		filter.watch(function(err,blockhash){
-			if(err ){
-				console.log("err: "+err);
-			}else{
-				let receipt = web3.eth.getTransactionReceipt(txHash);
-				blockAfter += 1;
-				if(receipt){
-					filter.stopWatching();
-					success(receipt);
-					return receipt;
-				}else if(blockAfter > 6){
-					fail("Get receipt timeout");
-				}
-			}
-		});
-	});
-}
+const getTransactionReceipt = require('../utils/getTransactionReceipt');
 
 async function sendTransaction(web3, Tx, receiver_address,sender_address, privKeyA, value, wanchainLog) {
 
@@ -41,10 +19,10 @@ async function sendTransaction(web3, Tx, receiver_address,sender_address, privKe
 	let hash = web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
 	// console.log("serializeTx: " + serializedTx.toString('hex'));
 
-	wanchainLog("tx hash: ", '\x1b[32m');
-	wanchainLog("waiting for ....", '\x1b[31m');
+	wanchainLog("tx hash: " +hash, '\x1b[32m');
+	wanchainLog("Waiting for ....", '\x1b[31m');
 
-	let receipt = await getTransactionReceipt(web3, hash);
+	let receipt = await getTransactionReceipt(hash);
 	console.log('receipt: ', receipt);
 	wanchainLog('You have finished a transaction with ordinary protection.', '\x1b[32m');
 }

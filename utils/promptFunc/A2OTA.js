@@ -29,47 +29,49 @@ function A2OTA(keystoreStr) {
 
 		let keyAObj = {version:keystore.version, crypto:keystore.crypto};
 
+		let privKeyA;
+		let address;
+		let weiToEth;
 		try {
-			const privKeyA = keythereum.recover(result.keyPassword, keyAObj);
-			const address = keystore.address;
-
-			const weiToEth = checkBalance(web3, address);
-
-			if (weiToEth === '0') {
-				wanchainLog('This address balance is 0 eth, pls recharge first.', config.consoleColor.COLOR_FgRed);
-			} else {
-				wanchainLog('Your wallet has been unlocked. Would you want to send a transaction? (y[Y]/n[N])', config.consoleColor.COLOR_FgGreen);
-
-				prompt.get(require('../schema/isTransaction'), function (err, result) {
-					const theState = result.state.toLowerCase();
-					switch (theState) {
-						case 'y':
-							wanchainLog('Input receiver\'s waddress', config.consoleColor.COLOR_FgGreen);
-
-							prompt.get(require('../schema/privacyAddr'), function (err, result) {
-								const to_waddress = result.waddress.slice(2);
-
-								wanchainLog('Input value(eth): ', config.consoleColor.COLOR_FgGreen);
-								prompt.get(require('../schema/privacyValue'), function (err, result) {
-
-									let contractInstanceAddress = config.contractInstanceAddress;
-									let contractCoinSC = web3.eth.contract(coinSCDefinition);
-									let contractCoinInstance = contractCoinSC.at(contractInstanceAddress);
-									let value = parseInt(result.value) * 10**18;
-
-									preScTransfer(contractInstanceAddress, contractCoinInstance, privKeyA, address, to_waddress, parseInt(value));
-								});
-							});
-							break;
-
-						case 'n':
-							wanchainLog('Bye!', config.consoleColor.COLOR_FgGreen);
-							break;
-					}
-				});
-			}
+			privKeyA = keythereum.recover(result.keyPassword, keyAObj);
+			address = keystore.address;
+			weiToEth = checkBalance(web3, address);
 		} catch (e) {
 			wanchainLog('Password invalid', config.consoleColor.COLOR_FgRed);
+		}
+
+		if (weiToEth === '0') {
+			wanchainLog('This address balance is 0 eth, pls recharge first.', config.consoleColor.COLOR_FgRed);
+		} else {
+			wanchainLog('Your wallet has been unlocked. Would you want to send a transaction? (y[Y]/n[N])', config.consoleColor.COLOR_FgGreen);
+
+			prompt.get(require('../schema/isTransaction'), function (err, result) {
+				const theState = result.state.toLowerCase();
+				switch (theState) {
+					case 'y':
+						wanchainLog('Input receiver\'s waddress', config.consoleColor.COLOR_FgGreen);
+
+						prompt.get(require('../schema/privacyAddr'), function (err, result) {
+							const to_waddress = result.waddress.slice(2);
+
+							wanchainLog('Input value(eth): ', config.consoleColor.COLOR_FgGreen);
+							prompt.get(require('../schema/privacyValue'), function (err, result) {
+
+								let contractInstanceAddress = config.contractInstanceAddress;
+								let contractCoinSC = web3.eth.contract(coinSCDefinition);
+								let contractCoinInstance = contractCoinSC.at(contractInstanceAddress);
+								let value = parseInt(result.value) * 10**18;
+
+								preScTransfer(contractInstanceAddress, contractCoinInstance, privKeyA, address, to_waddress, parseInt(value));
+							});
+						});
+						break;
+
+					case 'n':
+						wanchainLog('Bye!', config.consoleColor.COLOR_FgGreen);
+						break;
+				}
+			});
 		}
 	});
 }

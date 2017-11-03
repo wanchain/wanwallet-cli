@@ -4,8 +4,9 @@ const Tx = require('wanchain-util').ethereumTx;
 const path = require('path');
 const solc = require('solc');
 
-
 const wanchainLog = require('../utils/wanchainLog');
+const getTransactionReceipt = require('../utils/getTransactionReceipt');
+
 const config = require('../config');
 
 const web3 = new Web3(new Web3.providers.HttpProvider( config.host + ":8545"));
@@ -42,30 +43,6 @@ async function tokenInit(address, waddress, privKeyA) {
 	let receipt = await getTransactionReceipt(hash);
 	console.log(receipt);
 	console.log("Token balance of ",address, " is ", TokenInstance.otabalanceOf(address).toString(), "key is ", TokenInstance.otaKey(address));
-}
-
-function getTransactionReceipt(txHash)
-{
-	return new Promise(function(success,fail){
-		let filter = web3.eth.filter('latest');
-		let blockAfter = 0;
-		filter.watch(function(err,blockhash){
-			if(err ){
-				console.log("err:"+err);
-				fail("err:"+err);
-			}else{
-				let receipt = web3.eth.getTransactionReceipt(txHash);
-				blockAfter += 1;
-				if(receipt){
-					filter.stopWatching();
-					success(receipt);
-					return receipt;
-				}else if(blockAfter > 6){
-					fail("Get receipt timeout");
-				}
-			}
-		});
-	});
 }
 
 

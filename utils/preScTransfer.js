@@ -8,32 +8,9 @@ const config = require('../config');
 const web3 = new Web3(new Web3.providers.HttpProvider( config.host + ":8545"));
 
 const wanchainLog = require('./wanchainLog');
+const getTransactionReceipt = require('../utils/getTransactionReceipt');
 
 web3.wan = new wanUtil.web3Wan(web3);
-
-
-function getTransactionReceipt(txHash)
-{
-	return new Promise(function(success,fail){
-		let filter = web3.eth.filter('latest');
-		let blockAfter = 0;
-		filter.watch(function(err,blockhash){
-			if(err ){
-				console.log("err: "+err);
-			}else{
-				let receipt = web3.eth.getTransactionReceipt(txHash);
-				blockAfter += 1;
-				if(receipt){
-					filter.stopWatching();
-					success(receipt);
-					return receipt;
-				}else if(blockAfter > 6){
-					fail("Get receipt timeout");
-				}
-			}
-		});
-	});
-}
 
 async function preScTransfer(contractInstanceAddress, contractCoinInstance, privateKey, myAddr, to_waddress, value){
 
