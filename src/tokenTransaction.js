@@ -27,91 +27,100 @@ prompt.delimiter = colors.green(">>");
 
 wanchainLog('Input your keystore file name: ', config.consoleColor.COLOR_FgGreen);
 prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
+
+	let keystore;
 	try {
 		let filename = "./keystore/" + result.OrdinaryKeystore + ".json";
 		let keystoreStr = fs.readFileSync(filename, "utf8");
 
-		let keystore = JSON.parse(keystoreStr)[1];
+		keystore = JSON.parse(keystoreStr)[1];
 		keystore.address = keystore.address.slice(2);
 		keystore.waddress = keystore.waddress.slice(2);
-		console.log('you keystore: ', keystore);
-
-		wanchainLog('Pls input your password to unlock your wallet', config.consoleColor.COLOR_FgGreen);
-		prompt.get(require('../utils/schema/keyPassword'), function (err, result) {
-			wanchainLog('waiting for unlock wallet....', config.consoleColor.COLOR_FgRed);
-
-			let content = fs.readFileSync(path.join("../sol", "ERC20.sol"), 'utf8');
-			let compiled = solc.compile(content, 1);
-			let privacyContract = web3.eth.contract(JSON.parse(compiled.contracts[':ERC20'].interface));
-			let TokenAddress = fs.readFileSync("ERC20.addr","utf8");
-			let TokenInstance = privacyContract.at(TokenAddress);
-
-
-			try {
-
-				let keyPassword = result.keyPassword;
-				let keyAObj = {version:keystore.version, crypto:keystore.crypto};
-				let keyBObj = {version:keystore.version, crypto:keystore.crypto2};
-				let privKeyA = keythereum.recover(keyPassword, keyAObj);
-				let privKeyB = keythereum.recover(keyPassword, keyBObj);
-				let myAddr = '0x'+keystore.address;
-
-
-				wanchainLog("Input waddress", config.consoleColor.COLOR_FgGreen);
-				prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
-					let token_to_waddr = result.waddress.slice(2);
-
-					wanchainLog('Input value: ', config.consoleColor.COLOR_FgGreen);
-					prompt.get(require('../utils/schema/theValue'), function (err, result) {
-						const value = result.value;
-
-						try {
-							let stampStr = fs.readFileSync('./otaData/stampData.txt', 'utf8');
-							let stampTotal = stampStr.split('\n');
-
-							let stampData = [];
-							for (let i=0; i<stampTotal.length; i++) {
-								if (stampTotal[i].length >0) {
-									if(JSON.parse(stampTotal[i]).address === keystore.address) {
-										stampData.push(JSON.parse(stampTotal[i]))
-									}
-								}
-							}
-
-							let stampDataUndo;
-							try{
-
-								let stampDataStateStr = fs.readFileSync("./otaData/stampDataState.txt","utf8");
-								let stampDataState = stampDataStateStr.split('\n');
-
-								stampDataUndo = stamp2json(stampData, stampDataState)[0];
-							} catch (e) {
-								stampDataUndo = stampData;
-							}
-
-							for (let i = 0; i<stampDataUndo.length; i++) {
-								wanchainLog('address: 0x' + stampDataUndo[i].address + ' stamp: ' + stampDataUndo[i].stamp + ' value: ' + stampDataUndo[i].value + '\n', config.consoleColor.COLOR_FgYellow);
-							}
-
-							wanchainLog("Input stamp", config.consoleColor.COLOR_FgGreen);
-							prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
-								let stamp = result.waddress;
-
-								tokenSend(TokenAddress, TokenInstance, stamp, value, token_to_waddr, keystore.address, privKeyA,privKeyB, myAddr);
-							})
-
-						} catch (e) {
-							wanchainLog('have not stampData.', config.consoleColor.COLOR_FgRed);
-						}
-					})
-				})
-
-			} catch (e) {
-				wanchainLog('password invalid', config.consoleColor.COLOR_FgRed);
-			}
-		});
+		console.log('Your keystore: ', keystore);
 	} catch (e) {
 		wanchainLog('File name invalid (ignore file extension)', config.consoleColor.COLOR_FgRed);
+		return;
 	}
+
+
+	wanchainLog('Pls input your password to unlock your wallet', config.consoleColor.COLOR_FgGreen);
+	prompt.get(require('../utils/schema/keyPassword'), function (err, result) {
+		wanchainLog('Waiting for unlock wallet....', config.consoleColor.COLOR_FgRed);
+
+		let content = fs.readFileSync(path.join("../sol", "ERC20.sol"), 'utf8');
+		let compiled = solc.compile(content, 1);
+		let privacyContract = web3.eth.contract(JSON.parse(compiled.contracts[':ERC20'].interface));
+		let TokenAddress = fs.readFileSync("ERC20.addr","utf8");
+		let TokenInstance = privacyContract.at(TokenAddress);
+
+		let privKeyA;
+		let privKeyB;
+		let myAddr;
+		try {
+			let keyPassword = result.keyPassword;
+			let keyAObj = {version:keystore.version, crypto:keystore.crypto};
+			let keyBObj = {version:keystore.version, crypto:keystore.crypto2};
+			privKeyA = keythereum.recover(keyPassword, keyAObj);
+			privKeyB = keythereum.recover(keyPassword, keyBObj);
+			myAddr = '0x'+keystore.address;
+		} catch (e) {
+			wanchainLog('Password invalid', config.consoleColor.COLOR_FgRed);
+			return;
+		}
+
+		wanchainLog("Input waddress", config.consoleColor.COLOR_FgGreen);
+		prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
+			let token_to_waddr = result.waddress.slice(2);
+
+			wanchainLog('Input value: ', config.consoleColor.COLOR_FgGreen);
+			prompt.get(require('../utils/schema/theValue'), function (err, result) {
+				const value = result.value;
+
+				try {
+					let stampStr = fs.readFileSync('./otaData/stampData.txt', 'utf8');
+					let stampTotal = stampStr.split('\n');
+
+					let stampData = [];
+					for (let i=0; i<stampTotal.length; i++) {
+						if (stampTotal[i].length >0) {
+							if(JSON.parse(stampTotal[i]).address === keystore.address) {
+								stampData.push(JSON.parse(stampTotal[i]))
+							}
+						}
+					}
+
+					let stampDataUndo;
+					try{
+
+						let stampDataStateStr = fs.readFileSync("./otaData/stampDataState.txt","utf8");
+						let stampDataState = stampDataStateStr.split('\n');
+
+						stampDataUndo = stamp2json(stampData, stampDataState)[0];
+					} catch (e) {
+						stampDataUndo = stampData;
+					}
+
+					if (stampDataUndo.length === 0) {
+						wanchainLog('No stamp data.', config.consoleColor.COLOR_FgRed);
+						return;
+					}
+
+					for (let i = 0; i<stampDataUndo.length; i++) {
+						wanchainLog('address: 0x' + stampDataUndo[i].address + ' stamp: ' + stampDataUndo[i].stamp + ' value: ' + stampDataUndo[i].value + '\n', config.consoleColor.COLOR_FgYellow);
+					}
+
+					wanchainLog("Input stamp", config.consoleColor.COLOR_FgGreen);
+					prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
+						let stamp = result.waddress;
+
+						tokenSend(TokenAddress, TokenInstance, stamp, value, token_to_waddr, keystore.address, privKeyA,privKeyB, myAddr);
+					})
+
+				} catch (e) {
+					wanchainLog('No stamp data.', config.consoleColor.COLOR_FgRed);
+				}
+			})
+		})
+	});
 });
 

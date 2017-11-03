@@ -22,15 +22,15 @@ prompt.get(require('../utils/schema/ordinaryAddr'), function (err, result) {
 
 	let address = result.address.slice(2);
 
-	let stampDataStr;
+	let stampDataTotal;
 	try {
-		stampDataStr = fs.readFileSync("./otaData/stampData.txt","utf8");
+		let stampDataStr = fs.readFileSync("./otaData/stampData.txt","utf8");
+		stampDataTotal = stampDataStr.split('\n');
 	} catch (e) {
 		wanchainLog('No ota data.', config.consoleColor.COLOR_FgRed);
-
+		return;
 	}
 
-	let stampDataTotal = stampDataStr.split('\n');
 
 	let otaData = [];
 	for (let i=0; i<stampDataTotal.length; i++) {
@@ -47,35 +47,31 @@ prompt.get(require('../utils/schema/ordinaryAddr'), function (err, result) {
 	}
 
 	try {
-		try {
-			let stampDataStateStr = fs.readFileSync("./otaData/stampDataState.txt","utf8");
-			let result = stampDataStateFunc(stampDataStateStr);
-			let otaDictStr = result[0];
-			let statTuple = result[1];
+		let stampDataStateStr = fs.readFileSync("./otaData/stampDataState.txt","utf8");
+		let result = stampDataStateFunc(stampDataStateStr);
+		let otaDictStr = result[0];
+		let statTuple = result[1];
 
-			for (let i = 0; i<otaData.length; i++) {
-				const index = i +1;
-				if (otaData[i].trim().length >0) {
-					const otaDataJson = JSON.parse(otaData[i]);
+		for (let i = 0; i<otaData.length; i++) {
+			const index = i +1;
+			if (otaData[i].trim().length >0) {
+				const otaDataJson = JSON.parse(otaData[i]);
 
-					if (statTuple.indexOf(otaDataJson.stamp) === -1) {
-						wanchainLog('Your stamp ' + index + ' >> '  + ' stamp: ' + otaDataJson.stamp + ' value: ' + otaDataJson.value + ' state: ' + otaDataJson.state, config.consoleColor.COLOR_FgGreen);
-					} else {
-						wanchainLog('Your stamp ' + index + ' >> '  + ' stamp: ' + otaDataJson.stamp + ' value: ' + otaDataJson.value + ' state: ' + otaDictStr[otaDataJson.stamp], config.consoleColor.COLOR_FgGreen);
-					}
-				}
-			}
-		} catch (e) {
-			for (let i = 0; i<otaData.length; i++) {
-				const index = i +1;
-				if (otaData[i].trim().length >0) {
-					const otaDataJson = JSON.parse(otaData[i]);
-
+				if (statTuple.indexOf(otaDataJson.stamp) === -1) {
 					wanchainLog('Your stamp ' + index + ' >> '  + ' stamp: ' + otaDataJson.stamp + ' value: ' + otaDataJson.value + ' state: ' + otaDataJson.state, config.consoleColor.COLOR_FgGreen);
+				} else {
+					wanchainLog('Your stamp ' + index + ' >> '  + ' stamp: ' + otaDataJson.stamp + ' value: ' + otaDataJson.value + ' state: ' + otaDictStr[otaDataJson.stamp], config.consoleColor.COLOR_FgGreen);
 				}
 			}
 		}
 	} catch (e) {
-		wanchainLog('No ota data.', config.consoleColor.COLOR_FgRed);
+		for (let i = 0; i<otaData.length; i++) {
+			const index = i +1;
+			if (otaData[i].trim().length >0) {
+				const otaDataJson = JSON.parse(otaData[i]);
+
+				wanchainLog('Your stamp ' + index + ' >> '  + ' stamp: ' + otaDataJson.stamp + ' value: ' + otaDataJson.value + ' state: ' + otaDataJson.state, config.consoleColor.COLOR_FgGreen);
+			}
+		}
 	}
 });

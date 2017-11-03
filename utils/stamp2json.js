@@ -4,95 +4,80 @@ function stamp2json(otaData, otaDataState) {
 	var resultUndo = [];
 	var resultTotal = [];
 
-	try {
+	let data = {};
 
-		if (otaDataState) {
-			var statTuple = [];
+	if (otaDataState) {
+		var statTuple = [];
 
-			var otaDict = [];
-			for (var i =0; i<otaDataState.length; i++) {
-				if(otaDataState[i].trim().length >0) {
-					var otaState = otaDataState[i].split('{')[1].split(':')[0].split('"')[1];
-					statTuple.push(otaState);
-					otaDict.push(otaDataState[i].split('{')[1].split('}')[0]);
-				}
-			}
-
-			var otaDictStr = '{';
-			for (var i =0; i< otaDict.length; i++) {
-				otaDictStr += otaDict[i];
-				if (i !== otaDict.length -1) {
-					otaDictStr += ',';
-				}
-			}
-
-			otaDictStr += '}';
-
-			otaDictStr = JSON.parse(otaDictStr);
-
-			for (var i = 0; i<otaData.length; i++) {
-				var index = i +1;
-				if (otaData[i].trim().length >0) {
-					var otaDataJson = JSON.parse(otaData[i]);
-
-					var data = {};
-					if (statTuple.indexOf(otaDataJson.stamp) === -1) {
-						data.address = otaDataJson.address;
-						data.value = otaDataJson.value;
-						data.state = otaDataJson.state;
-						data.stamp = otaDataJson.stamp;
-						resultTotal.push(data);
-						resultUndo.push(data);
-
-						// console.log('Your otaData ' + index + ' >> '  + ' ota: ' + otaDataJson.ota + ' value: ' + otaDataJson.value + ' state: ' + otaDataJson.state);
-					} else {
-						data.address = otaDataJson.address;
-						data.value = otaDataJson.value;
-						data.state = otaDictStr[otaDataJson.stamp];
-						data.stamp = otaDataJson.stamp;
-						resultTotal.push(data);
-
-						// console.log('Your otaData ' + index + ' >> '  + ' ota: ' + otaDataJson.ota + ' value: ' + otaDataJson.value + ' state: ' + otaDictStr[otaDataJson.ota]);
-					}
-				}
-			}
-		} else {
-			for (var i = 0; i<otaData.length; i++) {
-				var index = i +1;
-				if (otaData[i].trim().length >0) {
-					var otaDataJson = JSON.parse(otaData[i]);
-
-					var data = {};
-
-					data.address = otaDataJson.address;
-					data.value = otaDataJson.value;
-					data.state = otaDataJson.state;
-					data.stamp = otaDataJson.stamp;
-					resultTotal.push(data);
-					resultUndo.push(data);
-				}
+		var otaDict = [];
+		for (var i =0; i<otaDataState.length; i++) {
+			if(otaDataState[i].trim().length >0) {
+				var otaState = otaDataState[i].split('{')[1].split(':')[0].split('"')[1];
+				statTuple.push(otaState);
+				otaDict.push(otaDataState[i].split('{')[1].split('}')[0]);
 			}
 		}
 
-	} catch (e) {
-		console.log('Not have stampData.');
+
+		var otaDictStr = '{';
+		for (var i =0; i< otaDict.length; i++) {
+			otaDictStr += otaDict[i];
+			if (i !== otaDict.length -1) {
+				otaDictStr += ',';
+			}
+		}
+
+		otaDictStr += '}';
+
+		otaDictStr = JSON.parse(otaDictStr);
+
+		for (var i = 0; i<otaData.length; i++) {
+			let otaDataJson = JSON.parse(otaData[i]);
+
+			if (statTuple.indexOf(otaDataJson.stamp) === -1) {
+				data.address = otaDataJson.address;
+				data.value = otaDataJson.value;
+				data.state = otaDataJson.state;
+				data.stamp = otaDataJson.stamp;
+				resultTotal.push(data);
+				resultUndo.push(data);
+
+			} else {
+				data.address = otaDataJson.address;
+				data.value = otaDataJson.value;
+				data.state = otaDictStr[otaDataJson.stamp];
+				data.stamp = otaDataJson.stamp;
+				resultTotal.push(data);
+			}
+		}
+	} else {
+		resultUndo = otaData;
+		resultTotal = otaData;
 	}
 
 	return [resultUndo, resultTotal];
 }
 
 
-// let otaDataStr = fs.readFileSync("../functions/otaData/stampData.txt","utf8");
+// let otaDataStr = fs.readFileSync("../src/otaData/stampData.txt","utf8");
 // let otaData = otaDataStr.split('\n');
+// let address = 'f945b58ca5378f374457877993f6c02b7ee48aa5';
 //
-// let otaDataStateStr = fs.readFileSync("../functions/otaData/stampDataState.txt","utf8");
+// let stampData = [];
+// for (let i=0; i<otaData.length; i++) {
+// 	if (otaData[i].length >0) {
+// 		if(JSON.parse(otaData[i]).address === address) {
+// 			stampData.push(JSON.parse(otaData[i]))
+// 		}
+// 	}
+// }
+//
+// let otaDataStateStr = fs.readFileSync("../src/otaData/stampDataState.txt","utf8");
 // let otaDataState = otaDataStateStr.split('\n');
 //
-// var undo = txt2json(otaData, otaDataState)[0];
-// var total = txt2json(otaData, otaDataState)[1];
+// var undo = stamp2json(stampData, otaDataState)[0];
 //
 // console.log(undo);
-// console.log('ddddddddddd');
-// console.log(total);
+
 
 module.exports = stamp2json;
