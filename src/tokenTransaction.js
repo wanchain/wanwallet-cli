@@ -68,7 +68,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 			return;
 		}
 
-		wanchainLog("Input waddress", config.consoleColor.COLOR_FgGreen);
+		wanchainLog("Input receiver's waddress", config.consoleColor.COLOR_FgGreen);
 		prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
 			let token_to_waddr = result.waddress.slice(2);
 
@@ -76,11 +76,11 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 			prompt.get(require('../utils/schema/theValue'), function (err, result) {
 				const value = result.value;
 
+				let stampData = [];
 				try {
 					let stampStr = fs.readFileSync('./otaData/stampData.txt', 'utf8');
 					let stampTotal = stampStr.split('\n');
 
-					let stampData = [];
 					for (let i=0; i<stampTotal.length; i++) {
 						if (stampTotal[i].length >0) {
 							if(JSON.parse(stampTotal[i]).address === keystore.address) {
@@ -88,37 +88,37 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 							}
 						}
 					}
-
-					let stampDataUndo;
-					try{
-
-						let stampDataStateStr = fs.readFileSync("./otaData/stampDataState.txt","utf8");
-						let stampDataState = stampDataStateStr.split('\n');
-
-						stampDataUndo = stamp2json(stampData, stampDataState)[0];
-					} catch (e) {
-						stampDataUndo = stampData;
-					}
-
-					if (stampDataUndo.length === 0) {
-						wanchainLog('No stamp data.', config.consoleColor.COLOR_FgRed);
-						return;
-					}
-
-					for (let i = 0; i<stampDataUndo.length; i++) {
-						wanchainLog('address: 0x' + stampDataUndo[i].address + ' stamp: ' + stampDataUndo[i].stamp + ' value: ' + stampDataUndo[i].value + '\n', config.consoleColor.COLOR_FgYellow);
-					}
-
-					wanchainLog("Input stamp", config.consoleColor.COLOR_FgGreen);
-					prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
-						let stamp = result.waddress;
-
-						tokenSend(TokenAddress, TokenInstance, stamp, value, token_to_waddr, keystore.address, privKeyA,privKeyB, myAddr);
-					})
-
 				} catch (e) {
 					wanchainLog('No stamp data.', config.consoleColor.COLOR_FgRed);
+					return;
 				}
+
+				let stampDataUndo;
+				try{
+
+					let stampDataStateStr = fs.readFileSync("./otaData/stampDataState.txt","utf8");
+					let stampDataState = stampDataStateStr.split('\n');
+
+					stampDataUndo = stamp2json(stampData, stampDataState)[0];
+				} catch (e) {
+					stampDataUndo = stampData;
+				}
+
+				if (stampDataUndo.length === 0) {
+					wanchainLog('No stamp data.', config.consoleColor.COLOR_FgRed);
+					return;
+				}
+
+				for (let i = 0; i<stampDataUndo.length; i++) {
+					wanchainLog('address: 0x' + stampDataUndo[i].address + ' stamp: ' + stampDataUndo[i].stamp + ' value: ' + stampDataUndo[i].value + '\n', config.consoleColor.COLOR_FgYellow);
+				}
+
+				wanchainLog("Input stamp", config.consoleColor.COLOR_FgGreen);
+				prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
+					let stamp = result.waddress;
+
+					tokenSend(TokenAddress, TokenInstance, stamp, value, token_to_waddr, keystore.address, privKeyA,privKeyB, myAddr);
+				})
 			})
 		})
 	});
