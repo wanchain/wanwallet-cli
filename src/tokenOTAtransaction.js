@@ -78,7 +78,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 			tokenStr = fs.readFileSync('./otaData/tokenData.txt', "utf8");
 			tokenStr = tokenStr.split('\n');
 		} catch (e) {
-			wanchainLog('No ota data', config.consoleColor.COLOR_FgRed);
+			wanchainLog('No token data', config.consoleColor.COLOR_FgRed);
 			return;
 		}
 

@@ -28,7 +28,7 @@ function tokenTransfer(data) {
 		for (var k=0; k<token.length;k++) {
 
 			if (token[k].length >0) {
-				if(address === token[k].receiver) {
+				if(address === JSON.parse(token[k]).receiver) {
 					result.push(JSON.parse(token[k]))
 				}
 			}
