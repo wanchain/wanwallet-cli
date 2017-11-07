@@ -48,8 +48,6 @@ async function preScTransfer(contractInstanceAddress, contractCoinInstance, priv
 	let log = fs.createWriteStream('../src/otaData/otaData.txt', {'flags': 'a'});
 	log.end(JSON.stringify(data) + '\n');
 
-	wanchainLog('receipt: ' + JSON.stringify(receipt), config.consoleColor.COLOR_FgGreen);
-
 	wanchainLog('You have finished a transaction with privacy protection.You could check receiver\'s OTA balance by node otabalance.', config.consoleColor.COLOR_FgYellow);
 }
 
