@@ -32,6 +32,8 @@ function getTransactionReceipt(txHash, ota)
 				var log = fs.createWriteStream('../src/otaData/otaDataState.txt', {'flags': 'a'});
 				log.end(JSON.stringify(data) + '\n');
 				console.log("err: "+err);
+				filter.stopWatching();
+				fail("Get receipt timeout");
 			}else{
 				let receipt = web3.eth.getTransactionReceipt(txHash);
 				blockAfter += 1;
@@ -48,6 +50,7 @@ function getTransactionReceipt(txHash, ota)
 					data[ota] = 'Failed';
 					var log = fs.createWriteStream('../src/otaData/otaDataState.txt', {'flags': 'a'});
 					log.end(JSON.stringify(data) + '\n');
+					filter.stopWatching();
 					fail("Get receipt timeout");
 				}
 			}

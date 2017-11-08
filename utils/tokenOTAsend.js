@@ -73,6 +73,7 @@ function getTransactionReceipt(txHash, address, token_to_ota_addr, token_to_addr
 		filter.watch(function(err,blockhash){
 			if(err ){
 				console.log("err:"+err);
+				filter.stopWatching();
 				fail("err:"+err);
 			}else{
 				let receipt = web3.eth.getTransactionReceipt(txHash);
@@ -94,6 +95,7 @@ function getTransactionReceipt(txHash, address, token_to_ota_addr, token_to_addr
 					success(receipt);
 					return receipt;
 				}else if(blockAfter > 6){
+					filter.stopWatching();
 					fail("Get receipt timeout");
 				}
 			}

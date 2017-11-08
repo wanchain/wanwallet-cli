@@ -24,7 +24,9 @@ function getTransactionReceipt(txHash, ota)
 		let blockAfter = 0;
 		filter.watch(function(err,blockhash){
 			if(err ){
-				console.log("err: "+err);
+				filter.stopWatching();
+				console.log("err:"+err);
+				fail("err:"+err);
 			}else{
 				let receipt = web3.eth.getTransactionReceipt(txHash);
 				blockAfter += 1;
@@ -37,6 +39,7 @@ function getTransactionReceipt(txHash, ota)
 					success(receipt);
 					return receipt;
 				}else if(blockAfter > 6){
+					filter.stopWatching();
 					fail("Get receipt timeout");
 				}
 			}

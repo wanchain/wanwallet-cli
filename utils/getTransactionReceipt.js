@@ -11,6 +11,7 @@ function getTransactionReceipt(txHash)
 		let blockAfter = 0;
 		filter.watch(function(err,blockhash){
 			if(err ){
+				filter.stopWatching();
 				console.log("err:"+err);
 				fail("err:"+err);
 			}else{
@@ -21,6 +22,7 @@ function getTransactionReceipt(txHash)
 					success(receipt);
 					return receipt;
 				}else if(blockAfter > 6){
+					filter.stopWatching();
 					fail("Get receipt timeout");
 				}
 			}
