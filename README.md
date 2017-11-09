@@ -2,7 +2,7 @@
 
 **wanwallet's explanation and operation：**
 
-1. Development environment:
+1. Development environment requirements:
 
 		node v8+, npm v4+, ubuntu v14.0+
 
@@ -24,3 +24,12 @@
 		2.14 keystore/: save keystore files.
 		2.15 otaData/: save ota and stamp files.
 		2.16 ERC20.addr: this is token contract address.
+
+3. Setting up in Docker
+
+       cd dev-setup
+       sh setup.sh
+    Once the setup is completed, you can enter the container using:
+
+		docker exec -it wanchain-dev /bin/bash
+    The repository files are under /data/wanwallet-cli/
