@@ -14,10 +14,11 @@ function createKeystore(password, fileName, wanchainLog) {
 	try {
 		fs.readFileSync(filepath, 'utf8');
 
+		wanchainLog('Please check is the filename used.', '\x1b[31m');
 		result = [false];
 		return result;
-
 	} catch (e) {
+		wanchainLog('Please copy your file name, passord and addresses which would be used later', '\x1b[31m');
 		var Crypto = [];
 		var privKeys = [];
 
