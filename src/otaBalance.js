@@ -21,7 +21,12 @@ prompt.delimiter = colors.green(">>");
 wanchainLog("Input waddress", config.consoleColor.COLOR_FgGreen);
 prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
 
-	let waddress = result.waddress;
+	let waddress;
+	try{
+		waddress = result.waddress;
+	} catch (e) {
+		return;
+	}
 
 	let otaDataTotal;
 	try {

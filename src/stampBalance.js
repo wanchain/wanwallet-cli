@@ -20,7 +20,12 @@ prompt.delimiter = colors.green(">>");
 wanchainLog("Input address", config.consoleColor.COLOR_FgGreen);
 prompt.get(require('../utils/schema/ordinaryAddr'), function (err, result) {
 
-	let address = result.address.slice(2);
+	let address;
+	try{
+		address = result.address.slice(2);
+	} catch (e) {
+		return;
+	}
 
 	let stampDataTotal;
 	try {

@@ -24,14 +24,24 @@ prompt.delimiter = colors.green(">>");
 
 wanchainLog("Input address", config.consoleColor.COLOR_FgGreen);
 prompt.get(require('../utils/schema/balanceSchema'), function (err, result) {
+	let balance;
+	let TokenAddress;
+	let content;
+	let compiled;
+	let privacyContract;
+	let TokenInstance;
 
-	let TokenAddress = fs.readFileSync("ERC20.addr","utf8");
-	let content = fs.readFileSync(path.join("../sol", "ERC20.sol"), 'utf8');
-	let compiled = solc.compile(content, 1);
-	let privacyContract = web3.eth.contract(JSON.parse(compiled.contracts[':ERC20'].interface));
-	let TokenInstance = privacyContract.at(TokenAddress);
-
-	let balance = TokenInstance.otabalanceOf(result.balance).toString();
+	try{
+		wanchainLog("Waiting for a moment...", config.consoleColor.COLOR_FgYellow);
+		TokenAddress = fs.readFileSync("ERC20.addr","utf8");
+		content = fs.readFileSync(path.join("../sol", "ERC20.sol"), 'utf8');
+		compiled = solc.compile(content, 1);
+		privacyContract = web3.eth.contract(JSON.parse(compiled.contracts[':ERC20'].interface));
+		TokenInstance = privacyContract.at(TokenAddress);
+		balance = TokenInstance.otabalanceOf(result.balance).toString();
+	} catch (e) {
+		return;
+	}
 
 	wanchainLog("Token balance of " + result.balance + " is " + balance, config.consoleColor.COLOR_FgGreen);
 

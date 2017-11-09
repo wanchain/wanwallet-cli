@@ -19,10 +19,14 @@ prompt.delimiter = colors.green(">>");
 
 
 prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
-	var filename = result.OrdinaryKeystore;
+	let filename;
+	try {
+		filename = result.OrdinaryKeystore;
+	} catch (e) {
+		return;
+	}
 	prompt.get(require('../utils/schema/keyPassword'), function (err, result) {
 		var password = result.keyPassword;
-		wanchainLog('Please copy your file name, passord and addresses which would be used later', config.consoleColor.COLOR_FgRed);
 		createKeystore(password, filename, wanchainLog);
 	})
 });

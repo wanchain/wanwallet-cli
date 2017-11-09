@@ -18,8 +18,12 @@ prompt.delimiter = colors.green(">>");
 
 wanchainLog("Input address", config.consoleColor.COLOR_FgGreen);
 prompt.get(require('../utils/schema/balanceSchema'), function (err, result) {
-	const cmdStr = 'curl -d "userAddr=' + result.balance + '" ' + config.host + ':3000/faucet';
-	// console.log(cmdStr);
+	let cmdStr;
+	try{
+		cmdStr = 'curl -d "userAddr=' + result.balance + '" ' + config.host + ':3000/faucet';
+	} catch (e) {
+		return;
+	}
 
 	exec(cmdStr, function(err,stdout,stderr){
 
