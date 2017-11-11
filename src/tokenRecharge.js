@@ -37,9 +37,9 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 		let keyAObj = {version:keystore.version, crypto:keystore.crypto};
 
 		try {
-			const privKeyA = keythereum.recover(result.keyPassword, keyAObj);
-			const address = keystore.address;
-			const waddress = keystore.waddress;
+			let privKeyA = keythereum.recover(result.keyPassword, keyAObj);
+			let address = keystore.address;
+			let waddress = keystore.waddress;
 
 			tokenInit(address, waddress, privKeyA);
 
