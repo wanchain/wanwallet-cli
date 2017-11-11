@@ -74,7 +74,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 
 			wanchainLog('Input value: ', config.consoleColor.COLOR_FgGreen);
 			prompt.get(require('../utils/schema/theValue'), function (err, result) {
-				const value = result.value;
+				let value = result.value;
 
 				let stampData = [];
 				try {

@@ -165,7 +165,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 				wanchainLog("Input stamp", config.consoleColor.COLOR_FgGreen);
 				prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
 
-					const account2 = keystore;
+					let account2 = keystore;
 					account2.address = '0x' + account2.address;
 
 					let stamp = result.waddress;
