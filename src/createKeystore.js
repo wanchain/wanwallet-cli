@@ -20,7 +20,7 @@ prompt.delimiter = colors.green(">>");
 prompt.get(require('../utils/schema/ordinaryKeystore'), function (err, result) {
 	let filename;
 	try {
-		filename = result.OrdinaryKeystore;
+		filename = result.ordinaryKeystore;
 	} catch (e) {
 		return;
 	}

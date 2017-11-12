@@ -30,7 +30,7 @@ prompt.get(require('../utils/schema/ordinaryKeystore'), function (err, result) {
 
 	let keystore;
 	try {
-		let filename = "./keystore/" + result.OrdinaryKeystore + ".json";
+		let filename = "./keystore/" + result.ordinaryKeystore + ".json";
 		let keystoreStr = fs.readFileSync(filename, "utf8");
 
 		keystore = JSON.parse(keystoreStr)[1];
