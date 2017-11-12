@@ -1,4 +1,3 @@
-const fs = require('fs');
 const prompt = require('prompt');
 const colors = require("colors/safe");
 const wanUtil = require('wanchain-util');
@@ -45,7 +44,7 @@ function A2OTA(keystoreStr) {
 		} else {
 			wanchainLog('Your wallet has been unlocked. Would you want to send a transaction? (y[Y]/n[N])', config.consoleColor.COLOR_FgGreen);
 
-			prompt.get(require('../schema/isTransaction'), function (err, result) {
+			prompt.get(require('../schema/ordinaryState'), function (err, result) {
 				const theState = result.state.toLowerCase();
 				switch (theState) {
 					case 'y':

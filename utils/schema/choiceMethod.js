@@ -1,6 +1,6 @@
-var colors = require("colors/safe");
+let colors = require("colors/safe");
 
-var methodSchema = {
+let choiceMethodSchema = {
 	properties: {
 		method: {
 			pattern: /^1$|^2$|^3$|^4$|^5$/,
@@ -11,4 +11,4 @@ var methodSchema = {
 	}
 };
 
-module.exports = methodSchema;
+module.exports = choiceMethodSchema;

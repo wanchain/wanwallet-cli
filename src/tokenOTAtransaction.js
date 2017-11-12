@@ -27,11 +27,11 @@ prompt.message = colors.blue("wanWallet");
 prompt.delimiter = colors.green(">>");
 
 wanchainLog('Input your keystore file name: ', config.consoleColor.COLOR_FgGreen);
-prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
+prompt.get(require('../utils/schema/ordinaryKeystore'), function (err, result) {
 	let filename;
 	let keystoreStr;
 	try{
-		filename = "./keystore/" + result.OrdinaryKeystore + ".json";
+		filename = "./keystore/" + result.ordinaryKeystore + ".json";
 		keystoreStr = fs.readFileSync(filename, "utf8");
 	} catch (e) {
 		wanchainLog('File name invalid (ignore file extension)', config.consoleColor.COLOR_FgRed);
@@ -95,10 +95,9 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 
 		for (let i=0; i<tokenData.length; i++) {
 			let tokenDataJson = tokenData[i];
-			let sender = tokenDataJson.sender;
 			let receiver = tokenDataJson.receiver;
 			let otaAddr = tokenDataJson.otaAddr;
-			var otaBalance = tokenDataJson.balance;
+			let otaBalance = tokenDataJson.balance;
 
 			if (receiver === myAddr) {
 				index +=1;
@@ -133,7 +132,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 				for (let i=0; i<stampTotal.length; i++) {
 					if (stampTotal[i].length >0) {
 						if(JSON.parse(stampTotal[i]).address === keystore.address) {
-							stampData.push(stampTotal[i])
+							stampData.push(stampTotal[i]);
 						}
 					}
 				}
@@ -186,9 +185,9 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 					otaKey.address =token_to_ota_addr;
 					otaKey.privKeyA = privateKey;
 
-					tokenOTAsend(TokenAddress, TokenInstance, token_to_ota_addr3, token_to_ota3, stamp, account2, otaKey, parseInt(otaBalance), myAddr, receiver_addr)
-				})
-			})
-		})
+					tokenOTAsend(TokenAddress, TokenInstance, token_to_ota_addr3, token_to_ota3, stamp, account2, otaKey, parseInt(otaBalance), myAddr, receiver_addr);
+				});
+			});
+		});
 	});
 });

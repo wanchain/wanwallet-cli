@@ -26,7 +26,7 @@ prompt.delimiter = colors.green(">>");
 
 
 wanchainLog('Input your keystore file name: ', config.consoleColor.COLOR_FgGreen);
-prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
+prompt.get(require('../utils/schema/ordinaryKeystore'), function (err, result) {
 
 	let keystore;
 	try {
@@ -73,7 +73,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 			let token_to_waddr = result.waddress.slice(2);
 
 			wanchainLog('Input value: ', config.consoleColor.COLOR_FgGreen);
-			prompt.get(require('../utils/schema/theValue'), function (err, result) {
+			prompt.get(require('../utils/schema/tokenValue'), function (err, result) {
 				let value = result.value;
 
 				let stampData = [];
@@ -84,7 +84,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 					for (let i=0; i<stampTotal.length; i++) {
 						if (stampTotal[i].length >0) {
 							if(JSON.parse(stampTotal[i]).address === keystore.address) {
-								stampData.push(JSON.parse(stampTotal[i]))
+								stampData.push(JSON.parse(stampTotal[i]));
 							}
 						}
 					}
@@ -118,9 +118,9 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 					let stamp = result.waddress;
 
 					tokenSend(TokenAddress, TokenInstance, stamp, value, token_to_waddr, keystore.address, privKeyA,privKeyB, myAddr);
-				})
-			})
-		})
+				});
+			});
+		});
 	});
 });
 

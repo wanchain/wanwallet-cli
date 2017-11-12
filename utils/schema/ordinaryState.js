@@ -1,6 +1,6 @@
-var colors = require("colors/safe");
+let colors = require("colors/safe");
 
-var ordinaryStateSchema = {
+let ordinaryStateSchema = {
 	properties: {
 		state: {
 			pattern: /^y$|^Y$|^n$|^N$/,

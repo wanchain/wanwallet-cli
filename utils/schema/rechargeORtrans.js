@@ -1,6 +1,6 @@
-var colors = require("colors/safe");
+let colors = require("colors/safe");
 
-var rechargeORtransSchema = {
+let rechargeORtransSchema = {
 	properties: {
 		rechargeORtrans: {
 			pattern: /^1$|^2$/,

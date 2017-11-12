@@ -1,6 +1,6 @@
-var colors = require("colors/safe");
+let colors = require("colors/safe");
 
-var ordinaryValueSchema = {
+let tokenValueSchema = {
 	properties: {
 		value: {
 			pattern: /^[1-9]\d*$/,
@@ -11,4 +11,4 @@ var ordinaryValueSchema = {
 	}
 };
 
-module.exports = ordinaryValueSchema;
+module.exports = tokenValueSchema;

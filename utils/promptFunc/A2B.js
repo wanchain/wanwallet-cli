@@ -1,6 +1,6 @@
-var config = require('../../config');
-var checkBalance = require('./checkBanlance');
-var sendTransaction = require('../sendTransaction');
+const config = require('../../config');
+const checkBalance = require('./checkBanlance');
+const sendTransaction = require('../sendTransaction');
 
 function A2B(prompt, web3, keythereum, Tx, keystoreStr, wanchainLog) {
 	let keystore = JSON.parse(keystoreStr)[1];
@@ -28,21 +28,21 @@ function A2B(prompt, web3, keythereum, Tx, keystoreStr, wanchainLog) {
 			wanchainLog('This address balance is 0 eth, pls recharge first.', config.consoleColor.COLOR_FgRed);
 		} else {
 			wanchainLog('Your wallet has been unlocked. Would you want to send a transaction? (y[Y]/n[N])', config.consoleColor.COLOR_FgGreen);
-			prompt.get(require('../schema/isTransaction'), function (err, result) {
-				const theState = result.state.toLowerCase();
+			prompt.get(require('../schema/ordinaryState'), function (err, result) {
+				let theState = result.state.toLowerCase();
 				switch (theState) {
 
 					case 'y':
 						wanchainLog('Input receiver\'s address', config.consoleColor.COLOR_FgGreen);
 
 						prompt.get(require('../schema/ordinaryAddr'), function (err, result) {
-							const receiver = result.address;
+                            let receiver = result.address;
 
 							wanchainLog('Input value(eth): ', config.consoleColor.COLOR_FgGreen);
 							prompt.get(require('../schema/ordinaryValue'), function (err, result) {
-								const strSendValueInWei = web3.toWei(result.value);
-								const bnSendValueInWei = new web3.BigNumber(strSendValueInWei);
-								const value = '0x' + bnSendValueInWei.toString(16);
+                                let strSendValueInWei = web3.toWei(result.value);
+                                let bnSendValueInWei = new web3.BigNumber(strSendValueInWei);
+                                let value = '0x' + bnSendValueInWei.toString(16);
 
 								sendTransaction(web3, Tx, receiver, address, privKeyA, value, wanchainLog);
 							});

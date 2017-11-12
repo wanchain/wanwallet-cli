@@ -1,10 +1,10 @@
-var fs = require('fs');
-var config = require('../../config');
+const fs = require('fs');
+const config = require('../../config');
 
-var txt2json = require('../txt2json');
-var checkOTAvalue = require('../checkOTAvalue');
-var otaTransaction = require('../otaTransaction');
-var wanchainLog = require('../wanchainLog');
+const txt2json = require('../txt2json');
+const checkOTAvalue = require('../checkOTAvalue');
+const otaTransaction = require('../otaTransaction');
+const wanchainLog = require('../wanchainLog');
 
 
 function OTA2B(prompt, keythereum, keystoreStr) {
@@ -33,8 +33,8 @@ function OTA2B(prompt, keythereum, keystoreStr) {
 		}
 
 		wanchainLog('Your wallet has been unlocked. Would you want to send a transaction? (y[Y]/n[N])', config.consoleColor.COLOR_FgGreen);
-		prompt.get(require('../schema/isTransaction'), function (err, result) {
-			var theState = result.state.toLowerCase();
+		prompt.get(require('../schema/ordinaryState'), function (err, result) {
+			let theState = result.state.toLowerCase();
 			switch (theState) {
 				case 'y':
 
@@ -46,7 +46,7 @@ function OTA2B(prompt, keythereum, keystoreStr) {
 						for (let i=0; i<otaDataTotal.length; i++) {
 							if (otaDataTotal[i].length >0) {
 								if(JSON.parse(otaDataTotal[i]).waddress === waddress) {
-									otaData.push(otaDataTotal[i])
+									otaData.push(otaDataTotal[i]);
 								}
 							}
 						}
@@ -86,7 +86,7 @@ function OTA2B(prompt, keythereum, keystoreStr) {
 						if (checkState[0]) {
 							let value = checkState[1];
 							wanchainLog('You select ota: ' + ota + ' value: ' + value, config.consoleColor.COLOR_FgRed);
-							otaTransaction(ota, parseInt(value), privKeyA, privKeyB, address.slice(2))
+							otaTransaction(ota, parseInt(value), privKeyA, privKeyB, address.slice(2));
 						} else {
 							wanchainLog('Value is 0.', config.consoleColor.COLOR_FgRed);
 						}

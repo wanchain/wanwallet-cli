@@ -1,6 +1,6 @@
-var colors = require("colors/safe");
+let colors = require("colors/safe");
 
-var privacyAddrSchema = {
+let privacyAddrSchema = {
 	properties: {
 		waddress: {
 			pattern: /^(0x)?[0-9a-fA-F]{132}$/,

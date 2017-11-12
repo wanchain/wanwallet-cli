@@ -1,6 +1,6 @@
-var colors = require("colors/safe");
+let colors = require("colors/safe");
 
-var ordinaryAddrSchema = {
+let ordinaryAddrSchema = {
 	properties: {
 		address: {
 			pattern: /^(0x)?[0-9a-fA-F]{40}$/,

@@ -1,6 +1,6 @@
-var colors = require("colors/safe");
+let colors = require("colors/safe");
 
-var keyPasswordSchema = {
+let keyPasswordSchema = {
 	properties: {
 		keyPassword: {
 			pattern: '[^\u4e00-\u9fa5]+',
