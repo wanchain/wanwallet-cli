@@ -29,18 +29,18 @@ function A2B(prompt, web3, keythereum, Tx, keystoreStr, wanchainLog) {
 		} else {
 			wanchainLog('Your wallet has been unlocked. Would you want to send a transaction? (y[Y]/n[N])', config.consoleColor.COLOR_FgGreen);
 			prompt.get(require('../schema/ordinaryState'), function (err, result) {
-				let theState = result.state.toLowerCase();
+				let theState = result.ordinaryState.toLowerCase();
 				switch (theState) {
 
 					case 'y':
 						wanchainLog('Input receiver\'s address', config.consoleColor.COLOR_FgGreen);
 
 						prompt.get(require('../schema/ordinaryAddr'), function (err, result) {
-                            let receiver = result.address;
+                            let receiver = result.ordinaryAddr;
 
 							wanchainLog('Input value(eth): ', config.consoleColor.COLOR_FgGreen);
 							prompt.get(require('../schema/ordinaryValue'), function (err, result) {
-                                let strSendValueInWei = web3.toWei(result.value);
+                                let strSendValueInWei = web3.toWei(result.ordinaryValue);
                                 let bnSendValueInWei = new web3.BigNumber(strSendValueInWei);
                                 let value = '0x' + bnSendValueInWei.toString(16);
 

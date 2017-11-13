@@ -2,7 +2,7 @@ let colors = require("colors/safe");
 
 let ordinaryStateSchema = {
 	properties: {
-		state: {
+        ordinaryState: {
 			pattern: /^y$|^Y$|^n$|^N$/,
 			message: "you should input y(Y) or n(N)",
 			description: colors.magenta("Input: "),

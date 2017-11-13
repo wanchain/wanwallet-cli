@@ -22,7 +22,7 @@ prompt.get(require('../utils/schema/ordinaryAddr'), function (err, result) {
 
 	let address;
 	try{
-		address = result.address.slice(2);
+		address = result.ordinaryAddr.slice(2);
 	} catch (e) {
 		return;
 	}
@@ -41,7 +41,7 @@ prompt.get(require('../utils/schema/ordinaryAddr'), function (err, result) {
 	for (let i=0; i<stampDataTotal.length; i++) {
 		if (stampDataTotal[i].length >0) {
 			if(JSON.parse(stampDataTotal[i]).address === address) {
-				otaData.push(stampDataTotal[i])
+				otaData.push(stampDataTotal[i]);
 			}
 		}
 	}

@@ -70,7 +70,7 @@ prompt.get(require('../utils/schema/ordinaryKeystore'), function (err, result) {
 
 		wanchainLog("Input receiver's waddress", config.consoleColor.COLOR_FgGreen);
 		prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
-			let token_to_waddr = result.waddress.slice(2);
+			let token_to_waddr = result.privacyAddr.slice(2);
 
 			wanchainLog('Input value: ', config.consoleColor.COLOR_FgGreen);
 			prompt.get(require('../utils/schema/tokenValue'), function (err, result) {
@@ -115,7 +115,7 @@ prompt.get(require('../utils/schema/ordinaryKeystore'), function (err, result) {
 
 				wanchainLog("Input stamp", config.consoleColor.COLOR_FgGreen);
 				prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
-					let stamp = result.waddress;
+					let stamp = result.privacyAddr;
 
 					tokenSend(TokenAddress, TokenInstance, stamp, value, token_to_waddr, keystore.address, privKeyA,privKeyB, myAddr);
 				});

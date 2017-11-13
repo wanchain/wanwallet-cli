@@ -45,13 +45,13 @@ function A2OTA(keystoreStr) {
 			wanchainLog('Your wallet has been unlocked. Would you want to send a transaction? (y[Y]/n[N])', config.consoleColor.COLOR_FgGreen);
 
 			prompt.get(require('../schema/ordinaryState'), function (err, result) {
-				const theState = result.state.toLowerCase();
+				const theState = result.ordinaryState.toLowerCase();
 				switch (theState) {
 					case 'y':
 						wanchainLog('Input receiver\'s waddress', config.consoleColor.COLOR_FgGreen);
 
 						prompt.get(require('../schema/privacyAddr'), function (err, result) {
-							const to_waddress = result.waddress.slice(2);
+							const to_waddress = result.privacyAddr.slice(2);
 
 							wanchainLog('Input value(eth): ', config.consoleColor.COLOR_FgGreen);
 							prompt.get(require('../schema/privacyValue'), function (err, result) {

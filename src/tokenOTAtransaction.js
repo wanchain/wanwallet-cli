@@ -116,7 +116,7 @@ prompt.get(require('../utils/schema/ordinaryKeystore'), function (err, result) {
 
 			wanchainLog("Input receiver's waddress", config.consoleColor.COLOR_FgGreen);
 			prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
-				let token_to_waddr = result.waddress.slice(2);
+				let token_to_waddr = result.privacyAddr.slice(2);
 
 				let stampStr;
 				try {
@@ -167,7 +167,7 @@ prompt.get(require('../utils/schema/ordinaryKeystore'), function (err, result) {
 					let account2 = keystore;
 					account2.address = '0x' + account2.address;
 
-					let stamp = result.waddress;
+					let stamp = result.privacyAddr;
 
 					let token_to_ota3 =  ethUtil.generateOTAWaddress(token_to_waddr).toLowerCase();
 					let token_to_ota_a3 = ethUtil.recoverPubkeyFromWaddress(token_to_ota3).A;

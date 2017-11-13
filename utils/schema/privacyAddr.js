@@ -2,7 +2,7 @@ let colors = require("colors/safe");
 
 let privacyAddrSchema = {
 	properties: {
-		waddress: {
+        privacyAddr: {
 			pattern: /^(0x)?[0-9a-fA-F]{132}$/,
 			message: "Waddress invalid",
 			description: colors.magenta("Input: "),

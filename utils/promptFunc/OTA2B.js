@@ -34,7 +34,7 @@ function OTA2B(prompt, keythereum, keystoreStr) {
 
 		wanchainLog('Your wallet has been unlocked. Would you want to send a transaction? (y[Y]/n[N])', config.consoleColor.COLOR_FgGreen);
 		prompt.get(require('../schema/ordinaryState'), function (err, result) {
-			let theState = result.state.toLowerCase();
+			let theState = result.ordinaryState.toLowerCase();
 			switch (theState) {
 				case 'y':
 
@@ -81,7 +81,7 @@ function OTA2B(prompt, keythereum, keystoreStr) {
 
 					wanchainLog('Input ota ', config.consoleColor.COLOR_FgGreen);
 					prompt.get(require('../schema/privacyAddr'), function (err, result) {
-						let ota = result.waddress;
+						let ota = result.privacyAddr;
 						let checkState = checkOTAvalue(ota, otaDataUndo);
 						if (checkState[0]) {
 							let value = checkState[1];

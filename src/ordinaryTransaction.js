@@ -1,5 +1,6 @@
 const fs = require('fs');
 const prompt = require('prompt');
+const optimist = require('optimist');
 const colors = require("colors/safe");
 const wanUtil = require('wanchain-util');
 const keythereum = require("keythereum");
@@ -15,6 +16,7 @@ const A2B = require('../utils/promptFunc/A2B');
 
 web3.wan = new wanUtil.web3Wan(web3);
 // Start the prompt
+prompt.override = optimist.argv;
 prompt.start();
 prompt.message = colors.blue("wanWallet");
 prompt.delimiter = colors.green(">>");
