@@ -1,5 +1,5 @@
 const config = require('../../config');
-const checkBalance = require('./checkBanlance');
+const checkBalance = require('./checkBalance');
 const sendTransaction = require('../sendTransaction');
 
 function A2B(prompt, web3, keythereum, Tx, keystoreStr, wanchainLog) {

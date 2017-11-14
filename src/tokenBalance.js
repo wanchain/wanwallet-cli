@@ -3,6 +3,8 @@
 const Web3 = require('web3');
 const fs = require("fs");
 const prompt = require('prompt');
+const optimist = require('optimist')
+    .string('tokenAddr');
 const colors = require("colors/safe");
 const wanUtil = require('wanchain-util');
 const path = require('path');
@@ -18,12 +20,13 @@ const web3 = new Web3(new Web3.providers.HttpProvider( config.host + ":8545"));
 web3.wan = new wanUtil.web3Wan(web3);
 
 // Start the prompt
+prompt.override = optimist.argv;
 prompt.start();
 prompt.message = colors.blue("wanWallet");
 prompt.delimiter = colors.green(">>");
 
 wanchainLog("Input address", config.consoleColor.COLOR_FgGreen);
-prompt.get(require('../utils/schema/balanceSchema'), function (err, result) {
+prompt.get(require('../utils/schema/tokenAddr'), function (err, result) {
 	let balance;
 	let TokenAddress;
 	let content;
@@ -38,15 +41,15 @@ prompt.get(require('../utils/schema/balanceSchema'), function (err, result) {
 		compiled = solc.compile(content, 1);
 		privacyContract = web3.eth.contract(JSON.parse(compiled.contracts[':ERC20'].interface));
 		TokenInstance = privacyContract.at(TokenAddress);
-		balance = TokenInstance.otabalanceOf(result.balance).toString();
+		balance = TokenInstance.otabalanceOf(result.tokenAddr).toString();
 	} catch (e) {
 		return;
 	}
 
-	wanchainLog("Token balance of " + result.balance + " is " + balance, config.consoleColor.COLOR_FgGreen);
+	wanchainLog("Token balance of " + result.tokenAddr + " is " + balance, config.consoleColor.COLOR_FgGreen);
 
 	let data={};
-	data.address = result.balance;
+	data.address = result.tokenAddr;
 	let tokenData;
 	try{
 		let tokenStr = fs.readFileSync('./otaData/tokenData.txt', "utf8");

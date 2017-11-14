@@ -8,6 +8,9 @@ const keythereum = require("keythereum");
 
 const wanUtil = require('wanchain-util');
 const prompt = require('prompt');
+const optimist = require('optimist')
+    .string('privacyAddr')
+    .string('stampAddr');
 const colors = require("colors/safe");
 
 const config = require('../config');
@@ -20,6 +23,7 @@ const tokenSend = require('../utils/tokenSend');
 web3.wan = new wanUtil.web3Wan(web3);
 
 // Start the prompt
+prompt.override = optimist.argv;
 prompt.start();
 prompt.message = colors.blue("wanWallet");
 prompt.delimiter = colors.green(">>");
@@ -74,7 +78,7 @@ prompt.get(require('../utils/schema/ordinaryKeystore'), function (err, result) {
 
 			wanchainLog('Input value: ', config.consoleColor.COLOR_FgGreen);
 			prompt.get(require('../utils/schema/tokenValue'), function (err, result) {
-				let value = result.value;
+				let value = result.tokenValue;
 
 				let stampData = [];
 				try {
@@ -114,8 +118,8 @@ prompt.get(require('../utils/schema/ordinaryKeystore'), function (err, result) {
 				}
 
 				wanchainLog("Input stamp", config.consoleColor.COLOR_FgGreen);
-				prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
-					let stamp = result.privacyAddr;
+				prompt.get(require('../utils/schema/stampAddr'), function (err, result) {
+					let stamp = result.stampAddr;
 
 					tokenSend(TokenAddress, TokenInstance, stamp, value, token_to_waddr, keystore.address, privKeyA,privKeyB, myAddr);
 				});

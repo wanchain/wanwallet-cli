@@ -1,10 +1,10 @@
 let colors = require("colors/safe");
 
-let privacyAddrSchema = {
+let stampAddrSchema = {
 	properties: {
-        privacyAddr: {
+        stampAddr: {
 			pattern: /^(0x)?[0-9a-fA-F]{132}$/,
-			message: "Waddress invalid",
+			message: "Stamp invalid",
 			description: colors.magenta("Input: "),
 			required: true,
             type: 'string'
@@ -12,4 +12,4 @@ let privacyAddrSchema = {
 	}
 };
 
-module.exports = privacyAddrSchema;
+module.exports = stampAddrSchema;

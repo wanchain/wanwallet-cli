@@ -9,6 +9,10 @@ const keythereum = require("keythereum");
 const wanUtil = require('wanchain-util');
 const ethUtil = wanUtil.ethereumUtil;
 const prompt = require('prompt');
+const optimist = require('optimist')
+    .string('privacyAddr')
+    .string('stampAddr')
+    .string('tokenAddr');
 const colors = require("colors/safe");
 
 const config = require('../config');
@@ -22,6 +26,7 @@ const tokenTransfer = require('../utils/tokenTransferFunc');
 web3.wan = new wanUtil.web3Wan(web3);
 
 // Start the prompt
+prompt.override = optimist.argv;
 prompt.start();
 prompt.message = colors.blue("wanWallet");
 prompt.delimiter = colors.green(">>");
@@ -92,12 +97,13 @@ prompt.get(require('../utils/schema/ordinaryKeystore'), function (err, result) {
 			data.token = tokenStr;
 		}
 		let tokenData = tokenTransfer(data);
+        let otaBalance;
 
 		for (let i=0; i<tokenData.length; i++) {
 			let tokenDataJson = tokenData[i];
 			let receiver = tokenDataJson.receiver;
 			let otaAddr = tokenDataJson.otaAddr;
-			let otaBalance = tokenDataJson.balance;
+			otaBalance = tokenDataJson.balance;
 
 			if (receiver === myAddr) {
 				index +=1;
@@ -111,10 +117,23 @@ prompt.get(require('../utils/schema/ordinaryKeystore'), function (err, result) {
 		}
 
 		wanchainLog('Input token ota address: ', config.consoleColor.COLOR_FgYellow);
-		prompt.get(require('../utils/schema/balanceSchema'), function (err, result) {
-			let token_to_ota_addr = result.balance;
+		prompt.get(require('../utils/schema/tokenAddr'), function (err, result) {
+			let token_to_ota_addr = result.tokenAddr;
 
-			wanchainLog("Input receiver's waddress", config.consoleColor.COLOR_FgGreen);
+			// Now get the balance of this tokenAddr
+            for (let i=0; i<tokenData.length; i++) {
+                let tokenDataJson = tokenData[i];
+                let receiver = tokenDataJson.receiver;
+                let otaAddr = tokenDataJson.otaAddr;
+
+                if (receiver === myAddr) {
+                	if (otaAddr === token_to_ota_addr) {
+						otaBalance = tokenDataJson.balance;
+					}
+                }
+            }
+
+            wanchainLog("Input receiver's waddress", config.consoleColor.COLOR_FgGreen);
 			prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
 				let token_to_waddr = result.privacyAddr.slice(2);
 
@@ -162,12 +181,12 @@ prompt.get(require('../utils/schema/ordinaryKeystore'), function (err, result) {
 				}
 
 				wanchainLog("Input stamp", config.consoleColor.COLOR_FgGreen);
-				prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
+				prompt.get(require('../utils/schema/stampAddr'), function (err, result) {
 
 					let account2 = keystore;
 					account2.address = '0x' + account2.address;
 
-					let stamp = result.privacyAddr;
+					let stamp = result.stampAddr;
 
 					let token_to_ota3 =  ethUtil.generateOTAWaddress(token_to_waddr).toLowerCase();
 					let token_to_ota_a3 = ethUtil.recoverPubkeyFromWaddress(token_to_ota3).A;

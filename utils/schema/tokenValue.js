@@ -2,7 +2,7 @@ let colors = require("colors/safe");
 
 let tokenValueSchema = {
 	properties: {
-		value: {
+        tokenValue: {
 			pattern: /^[1-9]\d*$/,
 			message: "Value invalid!(you should input positive integer)",
 			description: colors.magenta("Input: "),

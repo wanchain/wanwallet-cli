@@ -1,17 +1,15 @@
-
 const fs = require('fs');
 const keythereum = require("keythereum");
-
 const prompt = require('prompt');
+const optimist = require('optimist');
 const colors = require("colors/safe");
-
 const config = require('../config');
-
 const wanchainLog = require('../utils/wanchainLog');
 const buyStamp = require('../utils/buyStampFunc');
 
 // Start the prompt
 prompt.start();
+prompt.override = optimist.argv;
 prompt.message = colors.blue("wanWallet");
 prompt.delimiter = colors.green(">>");
 

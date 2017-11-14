@@ -1,5 +1,7 @@
 const fs = require('fs');
 const prompt = require('prompt');
+const optimist = require('optimist')
+    .string('stampAddr');
 const colors = require("colors/safe");
 const wanUtil = require('wanchain-util');
 const Web3 = require("web3");
@@ -13,16 +15,17 @@ const stampDataStateFunc = require('../utils/stampDataStateFunc');
 
 web3.wan = new wanUtil.web3Wan(web3);
 // Start the prompt
+prompt.override = optimist.argv;
 prompt.start();
 prompt.message = colors.blue("wanWallet");
 prompt.delimiter = colors.green(">>");
 
 wanchainLog("Input address", config.consoleColor.COLOR_FgGreen);
-prompt.get(require('../utils/schema/ordinaryAddr'), function (err, result) {
+prompt.get(require('../utils/schema/stampAddr'), function (err, result) {
 
 	let address;
 	try{
-		address = result.ordinaryAddr.slice(2);
+		address = result.stampAddr.slice(2);
 	} catch (e) {
 		return;
 	}

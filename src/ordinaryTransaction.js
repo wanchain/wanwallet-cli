@@ -1,6 +1,7 @@
 const fs = require('fs');
 const prompt = require('prompt');
-const optimist = require('optimist');
+const optimist = require('optimist')
+    .string('ordinaryAddr');
 const colors = require("colors/safe");
 const wanUtil = require('wanchain-util');
 const keythereum = require("keythereum");
