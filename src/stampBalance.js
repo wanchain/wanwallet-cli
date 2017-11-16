@@ -1,7 +1,7 @@
 const fs = require('fs');
 const prompt = require('prompt');
 const optimist = require('optimist')
-    .string('stampAddr');
+    .string('ordinaryAddr');
 const colors = require("colors/safe");
 const wanUtil = require('wanchain-util');
 const Web3 = require("web3");
@@ -21,11 +21,11 @@ prompt.message = colors.blue("wanWallet");
 prompt.delimiter = colors.green(">>");
 
 wanchainLog("Input address", config.consoleColor.COLOR_FgGreen);
-prompt.get(require('../utils/schema/stampAddr'), function (err, result) {
+prompt.get(require('../utils/schema/ordinaryAddr'), function (err, result) {
 
 	let address;
 	try{
-		address = result.stampAddr.slice(2);
+		address = result.ordinaryAddr.slice(2);
 	} catch (e) {
 		return;
 	}
@@ -38,7 +38,6 @@ prompt.get(require('../utils/schema/stampAddr'), function (err, result) {
 		wanchainLog('No stamp data.', config.consoleColor.COLOR_FgRed);
 		return;
 	}
-
 
 	let otaData = [];
 	for (let i=0; i<stampDataTotal.length; i++) {

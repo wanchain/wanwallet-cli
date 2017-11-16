@@ -1,6 +1,6 @@
 
 function checkOTAvalue(otaAddress, undo) {
-	for (var i = 0; i<undo.length; i++) {
+	for (let i = 0; i<undo.length; i++) {
 		if (otaAddress === undo[i].ota)  {
 			return [true, undo[i].value];
 		}
@@ -10,7 +10,7 @@ function checkOTAvalue(otaAddress, undo) {
 }
 
 
-// var testData = [
+// let testData = [
 // 	{ ota: '03826Ec4332ED0AC01c796f9F92796424fAB137e55CB1EC32bB996A45B5fb0B852033dC46533B51c676a71578Eb067F8436C39Ff035c1513e81421242C45B9604d69',
 // 		value: '2000000000000000000',
 // 		state: 'Undo' },
@@ -19,7 +19,7 @@ function checkOTAvalue(otaAddress, undo) {
 // 	state: 'Done' }];
 //
 //
-// var result = checkOTAvalue('03826Ec4332ED0AC01c796f9F92796424fAB137e55CB1EC32bB996A45B5fb0B852033dC46533B51c676a71578Eb067F8436C39Ff035c1513e81421242C45B9604d69', testData);
+// let result = checkOTAvalue('03826Ec4332ED0AC01c796f9F92796424fAB137e55CB1EC32bB996A45B5fb0B852033dC46533B51c676a71578Eb067F8436C39Ff035c1513e81421242C45B9604d69', testData);
 // console.log(result);
 
 

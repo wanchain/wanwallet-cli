@@ -1,26 +1,24 @@
-var fs = require('fs');
-
 function stamp2json(otaData, otaDataState) {
-	var resultUndo = [];
-	var resultTotal = [];
+	let resultUndo = [];
+	let resultTotal = [];
 
 	let data = {};
 
 	if (otaDataState) {
-		var statTuple = [];
+		let statTuple = [];
 
-		var otaDict = [];
-		for (var i =0; i<otaDataState.length; i++) {
+		let otaDict = [];
+		for (let i =0; i<otaDataState.length; i++) {
 			if(otaDataState[i].trim().length >0) {
-				var otaState = otaDataState[i].split('{')[1].split(':')[0].split('"')[1];
+				let otaState = otaDataState[i].split('{')[1].split(':')[0].split('"')[1];
 				statTuple.push(otaState);
 				otaDict.push(otaDataState[i].split('{')[1].split('}')[0]);
 			}
 		}
 
 
-		var otaDictStr = '{';
-		for (var i =0; i< otaDict.length; i++) {
+		let otaDictStr = '{';
+		for (let i =0; i< otaDict.length; i++) {
 			otaDictStr += otaDict[i];
 			if (i !== otaDict.length -1) {
 				otaDictStr += ',';
@@ -31,7 +29,7 @@ function stamp2json(otaData, otaDataState) {
 
 		otaDictStr = JSON.parse(otaDictStr);
 
-		for (var i = 0; i<otaData.length; i++) {
+		for (let i = 0; i<otaData.length; i++) {
 			let otaDataJson = JSON.parse(otaData[i]);
 
 			if (statTuple.indexOf(otaDataJson.stamp) === -1) {
@@ -75,7 +73,7 @@ function stamp2json(otaData, otaDataState) {
 // let otaDataStateStr = fs.readFileSync("../src/otaData/stampDataState.txt","utf8");
 // let otaDataState = otaDataStateStr.split('\n');
 //
-// var undo = stamp2json(stampData, otaDataState)[0];
+// let undo = stamp2json(stampData, otaDataState)[0];
 //
 // console.log(undo);
 

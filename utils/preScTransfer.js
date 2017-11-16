@@ -14,11 +14,11 @@ web3.wan = new wanUtil.web3Wan(web3);
 
 async function preScTransfer(contractInstanceAddress, contractCoinInstance, privateKey, myAddr, to_waddress, value){
 
-	var otaDestAddress = ethUtil.generateOTAWaddress(to_waddress).toLowerCase();
+	let otaDestAddress = ethUtil.generateOTAWaddress(to_waddress).toLowerCase();
 	console.log('otaDestAddress: ', otaDestAddress);
 	let payload = contractCoinInstance.buyCoinNote.getData(otaDestAddress, value);
-	var serial = '0x' + web3.eth.getTransactionCount(myAddr).toString(16);
-	var rawTx = {
+	let serial = '0x' + web3.eth.getTransactionCount(myAddr).toString(16);
+	let rawTx = {
 		Txtype: '0x0',
 		nonce: serial,
 		gasPrice: '0x6fc23ac00',
@@ -29,9 +29,9 @@ async function preScTransfer(contractInstanceAddress, contractCoinInstance, priv
 	};
 	console.log("payload: " + rawTx.data);
 
-	var tx = new Tx(rawTx);
+	let tx = new Tx(rawTx);
 	tx.sign(privateKey);
-	var serializedTx = tx.serialize();
+	let serializedTx = tx.serialize();
 	let hash = web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
 
 	// wanchainLog('serializeTx: ' + serializedTx.toString('hex'), config.consoleColor.COLOR_FgGreen);
