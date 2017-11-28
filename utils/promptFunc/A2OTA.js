@@ -1,4 +1,3 @@
-const fs = require('fs');
 const prompt = require('prompt');
 const colors = require("colors/safe");
 const wanUtil = require('wanchain-util');
@@ -10,7 +9,7 @@ const config = require('../../config');
 const web3 = new Web3(new Web3.providers.HttpProvider( config.host + ":8545"));
 
 const wanchainLog = require('../wanchainLog');
-const checkBalance = require('../promptFunc/checkBanlance');
+const checkBalance = require('./checkBalance');
 const preScTransfer = require('../preScTransfer');
 
 web3.wan = new wanUtil.web3Wan(web3);
@@ -45,14 +44,20 @@ function A2OTA(keystoreStr) {
 		} else {
 			wanchainLog('Your wallet has been unlocked. Would you want to send a transaction? (y[Y]/n[N])', config.consoleColor.COLOR_FgGreen);
 
-			prompt.get(require('../schema/isTransaction'), function (err, result) {
-				const theState = result.state.toLowerCase();
+			prompt.get(require('../schema/ordinaryState'), function (err, result) {
+				const theState = result.ordinaryState.toLowerCase();
 				switch (theState) {
 					case 'y':
 						wanchainLog('Input receiver\'s waddress', config.consoleColor.COLOR_FgGreen);
 
 						prompt.get(require('../schema/privacyAddr'), function (err, result) {
-							const to_waddress = result.waddress.slice(2);
+							console.log(result.privacyAddr);
+							let to_waddress;
+							if (result.privacyAddr.slice(0,2) === '0x') {
+								to_waddress = result.privacyAddr.slice(2);
+                            } else {
+                                to_waddress = result.privacyAddr;
+                            }
 
 							wanchainLog('Input value(eth): ', config.consoleColor.COLOR_FgGreen);
 							prompt.get(require('../schema/privacyValue'), function (err, result) {
@@ -60,7 +65,7 @@ function A2OTA(keystoreStr) {
 								let contractInstanceAddress = config.contractInstanceAddress;
 								let contractCoinSC = web3.eth.contract(coinSCDefinition);
 								let contractCoinInstance = contractCoinSC.at(contractInstanceAddress);
-								let value = parseInt(result.value) * 10**18;
+								let value = parseInt(result.privacyValue) * 10**18;
 
 								preScTransfer(contractInstanceAddress, contractCoinInstance, privKeyA, address, to_waddress, parseInt(value));
 							});

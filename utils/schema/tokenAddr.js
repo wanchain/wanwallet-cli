@@ -1,10 +1,10 @@
 let colors = require("colors/safe");
 
-let ordinaryAddrSchema = {
+let tokenAddrSchema = {
 	properties: {
-        ordinaryAddr: {
+        tokenAddr: {
 			pattern: /^0x[0-9a-fA-F]{40}$/,
-            message: 'Address invalid!',
+            message: 'Token address invalid!',
 			description: colors.magenta("Input: "),
 			required: true,
             type: 'string'
@@ -12,4 +12,4 @@ let ordinaryAddrSchema = {
 	}
 };
 
-module.exports = ordinaryAddrSchema;
+module.exports = tokenAddrSchema;

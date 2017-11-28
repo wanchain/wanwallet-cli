@@ -9,6 +9,10 @@ const keythereum = require("keythereum");
 const wanUtil = require('wanchain-util');
 const ethUtil = wanUtil.ethereumUtil;
 const prompt = require('prompt');
+const optimist = require('optimist')
+    .string('privacyAddr')
+    .string('stampAddr')
+    .string('tokenAddr');
 const colors = require("colors/safe");
 
 const config = require('../config');
@@ -22,16 +26,17 @@ const tokenTransfer = require('../utils/tokenTransferFunc');
 web3.wan = new wanUtil.web3Wan(web3);
 
 // Start the prompt
+prompt.override = optimist.argv;
 prompt.start();
 prompt.message = colors.blue("wanWallet");
 prompt.delimiter = colors.green(">>");
 
 wanchainLog('Input your keystore file name: ', config.consoleColor.COLOR_FgGreen);
-prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
+prompt.get(require('../utils/schema/ordinaryKeystore'), function (err, result) {
 	let filename;
 	let keystoreStr;
 	try{
-		filename = "./keystore/" + result.OrdinaryKeystore + ".json";
+		filename = "./keystore/" + result.ordinaryKeystore + ".json";
 		keystoreStr = fs.readFileSync(filename, "utf8");
 	} catch (e) {
 		wanchainLog('File name invalid (ignore file extension)', config.consoleColor.COLOR_FgRed);
@@ -92,13 +97,13 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 			data.token = tokenStr;
 		}
 		let tokenData = tokenTransfer(data);
+        let otaBalance;
 
 		for (let i=0; i<tokenData.length; i++) {
 			let tokenDataJson = tokenData[i];
-			let sender = tokenDataJson.sender;
 			let receiver = tokenDataJson.receiver;
 			let otaAddr = tokenDataJson.otaAddr;
-			var otaBalance = tokenDataJson.balance;
+			otaBalance = tokenDataJson.balance;
 
 			if (receiver === myAddr) {
 				index +=1;
@@ -112,12 +117,25 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 		}
 
 		wanchainLog('Input token ota address: ', config.consoleColor.COLOR_FgYellow);
-		prompt.get(require('../utils/schema/balanceSchema'), function (err, result) {
-			let token_to_ota_addr = result.balance;
+		prompt.get(require('../utils/schema/tokenAddr'), function (err, result) {
+			let token_to_ota_addr = result.tokenAddr;
 
-			wanchainLog("Input receiver's waddress", config.consoleColor.COLOR_FgGreen);
+			// Now get the balance of this tokenAddr
+            for (let i=0; i<tokenData.length; i++) {
+                let tokenDataJson = tokenData[i];
+                let receiver = tokenDataJson.receiver;
+                let otaAddr = tokenDataJson.otaAddr;
+
+                if (receiver === myAddr) {
+                	if (otaAddr === token_to_ota_addr) {
+						otaBalance = tokenDataJson.balance;
+					}
+                }
+            }
+
+            wanchainLog("Input receiver's waddress", config.consoleColor.COLOR_FgGreen);
 			prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
-				let token_to_waddr = result.waddress.slice(2);
+				let token_to_waddr = result.privacyAddr.slice(2);
 
 				let stampStr;
 				try {
@@ -133,7 +151,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 				for (let i=0; i<stampTotal.length; i++) {
 					if (stampTotal[i].length >0) {
 						if(JSON.parse(stampTotal[i]).address === keystore.address) {
-							stampData.push(stampTotal[i])
+							stampData.push(stampTotal[i]);
 						}
 					}
 				}
@@ -163,12 +181,12 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 				}
 
 				wanchainLog("Input stamp", config.consoleColor.COLOR_FgGreen);
-				prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
+				prompt.get(require('../utils/schema/stampAddr'), function (err, result) {
 
 					let account2 = keystore;
 					account2.address = '0x' + account2.address;
 
-					let stamp = result.waddress;
+					let stamp = result.stampAddr;
 
 					let token_to_ota3 =  ethUtil.generateOTAWaddress(token_to_waddr).toLowerCase();
 					let token_to_ota_a3 = ethUtil.recoverPubkeyFromWaddress(token_to_ota3).A;
@@ -186,9 +204,9 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 					otaKey.address =token_to_ota_addr;
 					otaKey.privKeyA = privateKey;
 
-					tokenOTAsend(TokenAddress, TokenInstance, token_to_ota_addr3, token_to_ota3, stamp, account2, otaKey, parseInt(otaBalance), myAddr, receiver_addr)
-				})
-			})
-		})
+					tokenOTAsend(TokenAddress, TokenInstance, token_to_ota_addr3, token_to_ota3, stamp, account2, otaKey, parseInt(otaBalance), myAddr, receiver_addr);
+				});
+			});
+		});
 	});
 });

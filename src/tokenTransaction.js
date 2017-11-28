@@ -8,6 +8,9 @@ const keythereum = require("keythereum");
 
 const wanUtil = require('wanchain-util');
 const prompt = require('prompt');
+const optimist = require('optimist')
+    .string('privacyAddr')
+    .string('stampAddr');
 const colors = require("colors/safe");
 
 const config = require('../config');
@@ -20,17 +23,18 @@ const tokenSend = require('../utils/tokenSend');
 web3.wan = new wanUtil.web3Wan(web3);
 
 // Start the prompt
+prompt.override = optimist.argv;
 prompt.start();
 prompt.message = colors.blue("wanWallet");
 prompt.delimiter = colors.green(">>");
 
 
 wanchainLog('Input your keystore file name: ', config.consoleColor.COLOR_FgGreen);
-prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
+prompt.get(require('../utils/schema/ordinaryKeystore'), function (err, result) {
 
 	let keystore;
 	try {
-		let filename = "./keystore/" + result.OrdinaryKeystore + ".json";
+		let filename = "./keystore/" + result.ordinaryKeystore + ".json";
 		let keystoreStr = fs.readFileSync(filename, "utf8");
 
 		keystore = JSON.parse(keystoreStr)[1];
@@ -70,11 +74,11 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 
 		wanchainLog("Input receiver's waddress", config.consoleColor.COLOR_FgGreen);
 		prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
-			let token_to_waddr = result.waddress.slice(2);
+			let token_to_waddr = result.privacyAddr.slice(2);
 
 			wanchainLog('Input value: ', config.consoleColor.COLOR_FgGreen);
-			prompt.get(require('../utils/schema/theValue'), function (err, result) {
-				let value = result.value;
+			prompt.get(require('../utils/schema/tokenValue'), function (err, result) {
+				let value = result.tokenValue;
 
 				let stampData = [];
 				try {
@@ -84,7 +88,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 					for (let i=0; i<stampTotal.length; i++) {
 						if (stampTotal[i].length >0) {
 							if(JSON.parse(stampTotal[i]).address === keystore.address) {
-								stampData.push(JSON.parse(stampTotal[i]))
+								stampData.push(JSON.parse(stampTotal[i]));
 							}
 						}
 					}
@@ -114,13 +118,13 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 				}
 
 				wanchainLog("Input stamp", config.consoleColor.COLOR_FgGreen);
-				prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
-					let stamp = result.waddress;
+				prompt.get(require('../utils/schema/stampAddr'), function (err, result) {
+					let stamp = result.stampAddr;
 
 					tokenSend(TokenAddress, TokenInstance, stamp, value, token_to_waddr, keystore.address, privKeyA,privKeyB, myAddr);
-				})
-			})
-		})
+				});
+			});
+		});
 	});
 });
 

@@ -20,8 +20,8 @@ async function tokenInit(address, waddress, privKeyA) {
 
 	let mintdata = TokenInstance.initPrivacyAsset.getData(address, waddress.slice(2), "0xf4240");
 
-	var serial = '0x' + web3.eth.getTransactionCount(address).toString(16);
-	var rawTx = {
+	let serial = '0x' + web3.eth.getTransactionCount(address).toString(16);
+	let rawTx = {
 		Txtype: '0x00',
 		nonce: serial,
 		gasPrice: '0x6fc23ac00',
@@ -32,9 +32,9 @@ async function tokenInit(address, waddress, privKeyA) {
 	};
 	// console.log("payload: " + rawTx.data.toString('hex'));
 
-	var tx = new Tx(rawTx);
+	let tx = new Tx(rawTx);
 	tx.sign(privKeyA);
-	var serializedTx = tx.serialize();
+	let serializedTx = tx.serialize();
 	let hash = web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
 	// console.log("serializeTx:" + serializedTx.toString('hex'));
 	console.log('Tx hash:'+hash);

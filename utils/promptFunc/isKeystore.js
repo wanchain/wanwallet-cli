@@ -1,18 +1,18 @@
-var config = require('../../config');
-var checkBalance = require('./checkBanlance');
-var isRecharge = require('./isRecharge');
+const config = require('../../config');
+const checkBalance = require('./checkBalance');
+const isRecharge = require('./isRecharge');
 
 function isKeystore(state, prompt, web3, wanchainLog) {
 	if (state === 'y') {
-		prompt.get(require('../schema/balanceSchema'), function (err, result) {
-			var weiToEth = checkBalance(web3, result.balance);
+		prompt.get(require('../schema/ordinaryAddr'), function (err, result) {
+			let weiToEth = checkBalance(web3, result.ordinaryAddr);
 			if (weiToEth === '0') {
 				wanchainLog(weiToEth.toString() + ' eth', config.consoleColor.COLOR_FgGreen);
 				wanchainLog('the address balance is 0 eth, do you want to recharge?', config.consoleColor.COLOR_FgGreen);
 				wanchainLog('pls input: \n' + 'y[Y]\n' + 'n[N]', config.consoleColor.COLOR_FgGreen);
 
 				prompt.get(require('./utils/schema/isTransaction'), function (err, result) {
-					var theState = result.state.toLowerCase();
+					let theState = result.state.toLowerCase();
 					switch (theState) {
 						case 'y':
 							isRecharge('y', prompt, web3, wanchainLog);

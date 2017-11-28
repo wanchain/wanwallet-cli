@@ -9,11 +9,11 @@ function tokenTransfer(data) {
 		let ota = data.ota;
 
 
-		for(var i=0; i<ota.length -1; i++) {
+		for(let i=0; i<ota.length -1; i++) {
 			otaList.push(ota[i].split('"')[1])
 		}
 
-		for (var j=0; j<token.length;j++) {
+		for (let j=0; j<token.length;j++) {
 
 			if (token[j].length >0) {
 				let tokenJson = JSON.parse(token[j]);
@@ -25,7 +25,7 @@ function tokenTransfer(data) {
 			}
 		}
 	} else {
-		for (var k=0; k<token.length;k++) {
+		for (let k=0; k<token.length;k++) {
 
 			if (token[k].length >0) {
 				if(address === JSON.parse(token[k]).receiver) {

@@ -1,5 +1,7 @@
 const fs = require('fs');
 const prompt = require('prompt');
+const optimist = require('optimist')
+    .string('privacyAddr');
 const colors = require("colors/safe");
 const keythereum = require("keythereum");
 
@@ -10,14 +12,15 @@ const OTA2B = require('../utils/promptFunc/OTA2B');
 
 
 // Start the prompt
+prompt.override = optimist.argv;
 prompt.start();
 prompt.message = colors.blue("wanWallet");
 prompt.delimiter = colors.green(">>");
 
 wanchainLog('Input your keystore file name: ', config.consoleColor.COLOR_FgGreen);
-prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
+prompt.get(require('../utils/schema/ordinaryKeystore'), function (err, result) {
 	try {
-		let filename = "./keystore/" + result.OrdinaryKeystore + ".json";
+		let filename = "./keystore/" + result.ordinaryKeystore + ".json";
 		let keystoreStr = fs.readFileSync(filename, "utf8");
 		OTA2B(prompt, keythereum, keystoreStr);
 	} catch (e) {

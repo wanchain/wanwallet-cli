@@ -1,17 +1,15 @@
-var config = require('../../config');
-var checkBalance = require('./checkBanlance');
-var isRecharge = require('./isRecharge');
+const config = require('../../config');
 
-var createKeystore = require('../createKeystore');
+const createKeystore = require('../createKeystore');
 
-function isCreateKeystore(prompt, web3, wanchainLog) {
-	prompt.get(require('../schema/mykeystore'), function (err, result) {
-		var filename = result.OrdinaryKeystore;
+function isCreateKeystore(prompt, wanchainLog) {
+	prompt.get(require('../schema/ordinaryKeystore'), function (err, result) {
+		let filename = result.ordinaryKeystore;
 		prompt.get(require('../schema/keyPassword'), function (err, result) {
-			var password = result.keyPassword;
+			let password = result.keyPassword;
 			wanchainLog('Please keep your file name, password and Address in mind', config.consoleColor.COLOR_FgRed);
 			createKeystore(password, filename, wanchainLog);
-		})
+		});
 	});
 }
 

@@ -39,8 +39,8 @@ async function  tokenOTAsend(TokenAddress, TokenInstance, token_to_ota_addr, tok
 	let glueContract = glueContractDef.at("0x0000000000000000000000000000000000000000");
 	let combinedData = glueContract.combine.getData(KIWQ, cxtInterfaceCallData);
 	//let all = TokenInstance.
-	var serial = '0x' + web3.eth.getTransactionCount(tokenHoderKeystore.address).toString(16);
-	var rawTx = {
+	let serial = '0x' + web3.eth.getTransactionCount(tokenHoderKeystore.address).toString(16);
+    let rawTx = {
 		Txtype: '0x06',
 		nonce: serial,
 		gasPrice: '0x6fc23ac00',
@@ -51,9 +51,9 @@ async function  tokenOTAsend(TokenAddress, TokenInstance, token_to_ota_addr, tok
 	};
 	// console.log("payload: " + rawTx.data.toString('hex'));
 
-	var tx = new Tx(rawTx);
+    let tx = new Tx(rawTx);
 	tx.sign(tokenHoderKeystore.privKeyA);
-	var serializedTx = tx.serialize();
+    let serializedTx = tx.serialize();
 	let hash = web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
 	// console.log("serializeTx:" + serializedTx.toString('hex'));
 	console.log('tx hash:'+hash);

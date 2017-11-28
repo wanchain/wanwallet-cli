@@ -1,20 +1,20 @@
 #!/usr/bin/env node
-var fs = require('fs');
+const fs = require('fs');
 const secp256k1 = require('secp256k1');
 const Web3 = require("web3");
 const ethUtil = require('wanchain-util').ethereumUtil;
 const Tx = require('wanchain-util').ethereumTx;
 
-var config = require('../config');
-var wanchainLog = require('./wanchainLog');
-let wanUtil = require('wanchain-util');
-var generatePubkeyIWQforRing = require('./generatePubkeyIWQforRing');
+const config = require('../config');
+const wanchainLog = require('./wanchainLog');
+const wanUtil = require('wanchain-util');
+const generatePubkeyIWQforRing = require('./generatePubkeyIWQforRing');
 
-var web3 = new Web3(new Web3.providers.HttpProvider( config.host + ":8545"));
+const web3 = new Web3(new Web3.providers.HttpProvider( config.host + ":8545"));
 
 web3.wan = new wanUtil.web3Wan(web3);
 
-let coinSCDefinition = wanUtil.coinSCAbi;
+const coinSCDefinition = wanUtil.coinSCAbi;
 
 
 function getTransactionReceipt(txHash, ota)
@@ -94,7 +94,7 @@ async function main(ota, value, privKeyA, privKeyB, address) {
 
 	console.log("fetch  ota set: ",otaSet);
 
-	var contractInstanceAddress = config.contractInstanceAddress;
+	let contractInstanceAddress = config.contractInstanceAddress;
 	let contractCoinSC = web3.eth.contract(coinSCDefinition);
 	let contractCoinInstance = contractCoinSC.at(contractInstanceAddress);
 

@@ -1,5 +1,5 @@
-var config = require('../../config');
-var checkBalance = require('./checkBanlance');
+const config = require('../../config');
+const checkBalance = require('./checkBalance');
 
 function isRecharge(state, prompt, web3, wanchainLog) {
 	if (state === 'y') {

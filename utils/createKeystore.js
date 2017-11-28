@@ -1,15 +1,15 @@
-let wanUtil = require('wanchain-util');
+const wanUtil = require('wanchain-util');
 
-var fs = require('fs');
-var ethUtil = require('ethereumjs-util');
-var ethUtilCrypto = require('crypto');
-var ethUtilScrypt = require('scryptsy');
-var ethUtilUuid = require('uuid');
+const fs = require('fs');
+const ethUtil = require('ethereumjs-util');
+const ethUtilCrypto = require('crypto');
+const ethUtilScrypt = require('scryptsy');
+const ethUtilUuid = require('uuid');
 
 
 function createKeystore(password, fileName, wanchainLog) {
-	var filepath = '../src/keystore/' + fileName + '.json';
-	var result = [];
+	let filepath = '../src/keystore/' + fileName + '.json';
+	let result = [];
 
 	try {
 		fs.readFileSync(filepath, 'utf8');
@@ -19,16 +19,16 @@ function createKeystore(password, fileName, wanchainLog) {
 		return result;
 	} catch (e) {
 		wanchainLog('Please copy your file name, passord and addresses which would be used later', '\x1b[31m');
-		var Crypto = [];
-		var privKeys = [];
+		let Crypto = [];
+		let privKeys = [];
 
-		for (var i=0; i<2; i++) {
+		for (let i=0; i<2; i++) {
 
-			var salt = ethUtilCrypto.randomBytes(32);
-			var iv = ethUtilCrypto.randomBytes(16);
-			var derivedKey;
-			var kdf = 'scrypt';
-			var kdfparams = {
+			let salt = ethUtilCrypto.randomBytes(32);
+			let iv = ethUtilCrypto.randomBytes(16);
+			let derivedKey;
+			let kdf = 'scrypt';
+			let kdfparams = {
 				dklen: 32,
 				salt: salt.toString('hex')
 			};
@@ -41,18 +41,18 @@ function createKeystore(password, fileName, wanchainLog) {
 
 			//privKey.push(derivedKey);
 
-			var cipher = ethUtilCrypto.createCipheriv('aes-128-ctr', derivedKey.slice(0, 16), iv);
+			let cipher = ethUtilCrypto.createCipheriv('aes-128-ctr', derivedKey.slice(0, 16), iv);
 			if (!cipher) {
 				throw new Error('Unsupported cipher')
 			}
 
-			var privkeyRandom = ethUtilCrypto.randomBytes(32);
-			var privkey = Buffer(privkeyRandom, 'hex');
+			let privkeyRandom = ethUtilCrypto.randomBytes(32);
+			let privkey = Buffer(privkeyRandom, 'hex');
 			privKeys.push(privkey);
 
-			var ciphertext = Buffer.concat([cipher.update(privkey), cipher.final()]);
+			let ciphertext = Buffer.concat([cipher.update(privkey), cipher.final()]);
 
-			var mac = wanUtil.ethereumUtil.sha3(Buffer.concat([derivedKey.slice(16, 32), new Buffer(ciphertext, 'hex')]));
+			let mac = wanUtil.ethereumUtil.sha3(Buffer.concat([derivedKey.slice(16, 32), new Buffer(ciphertext, 'hex')]));
 
 			Crypto.push(
 				{
@@ -66,10 +66,10 @@ function createKeystore(password, fileName, wanchainLog) {
 			)
 		}
 
-		var waddress = wanUtil.ethereumUtil.generateWaddrFromPriv(privKeys[0], privKeys[1]);
-		var address = '0x' + ethUtil.privateToAddress(privKeys[0]).toString('hex');
+		let waddress = wanUtil.ethereumUtil.generateWaddrFromPriv(privKeys[0], privKeys[1]);
+		let address = '0x' + ethUtil.privateToAddress(privKeys[0]).toString('hex');
 
-		var data = {
+		let data = {
 			version: 3,
 			id: ethUtilUuid.v4({
 				random: ethUtilCrypto.randomBytes(16)

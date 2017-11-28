@@ -1,5 +1,7 @@
 const fs = require('fs');
 const prompt = require('prompt');
+const optimist = require('optimist')
+    .string('ordinaryAddr');
 const colors = require("colors/safe");
 const wanUtil = require('wanchain-util');
 const Web3 = require("web3");
@@ -13,6 +15,7 @@ const stampDataStateFunc = require('../utils/stampDataStateFunc');
 
 web3.wan = new wanUtil.web3Wan(web3);
 // Start the prompt
+prompt.override = optimist.argv;
 prompt.start();
 prompt.message = colors.blue("wanWallet");
 prompt.delimiter = colors.green(">>");
@@ -22,7 +25,7 @@ prompt.get(require('../utils/schema/ordinaryAddr'), function (err, result) {
 
 	let address;
 	try{
-		address = result.address.slice(2);
+		address = result.ordinaryAddr.slice(2);
 	} catch (e) {
 		return;
 	}
@@ -36,12 +39,11 @@ prompt.get(require('../utils/schema/ordinaryAddr'), function (err, result) {
 		return;
 	}
 
-
 	let otaData = [];
 	for (let i=0; i<stampDataTotal.length; i++) {
 		if (stampDataTotal[i].length >0) {
 			if(JSON.parse(stampDataTotal[i]).address === address) {
-				otaData.push(stampDataTotal[i])
+				otaData.push(stampDataTotal[i]);
 			}
 		}
 	}

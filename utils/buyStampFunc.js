@@ -14,19 +14,19 @@ const getTransactionReceipt = require('../utils/getTransactionReceipt');
 
 web3.wan = new wanUtil.web3Wan(web3);
 
-let preStampAddress = config.contractStampAddress;
-let contractStampSC = web3.eth.contract(wanUtil.stampSCAbi);
-let contractStampInstance = contractStampSC.at(preStampAddress);
+const preStampAddress = config.contractStampAddress;
+const contractStampSC = web3.eth.contract(wanUtil.stampSCAbi);
+const contractStampInstance = contractStampSC.at(preStampAddress);
 
 web3.wan = new wanUtil.web3Wan(web3);
 
 
 async function buyStamp(privateKey,fromaddress, toWaddr, value){
-	var stamp = ethUtil.generateOTAWaddress(toWaddr).toLowerCase();
+    let stamp = ethUtil.generateOTAWaddress(toWaddr).toLowerCase();
 	let payload = contractStampInstance.buyStamp.getData(stamp, value);
-	var serial = '0x' + web3.eth.getTransactionCount(fromaddress).toString(16);
+    let serial = '0x' + web3.eth.getTransactionCount(fromaddress).toString(16);
 
-	var rawTx = {
+    let rawTx = {
 		Txtype: '0x0',
 		nonce: serial,
 		gasPrice: '0x6fc23ac00',
@@ -37,9 +37,9 @@ async function buyStamp(privateKey,fromaddress, toWaddr, value){
 	};
 	// console.log("payload: " + rawTx.data);
 	// console.log("tx: ",rawTx);
-	var tx = new Tx(rawTx);
+    let tx = new Tx(rawTx);
 	tx.sign(privateKey);
-	var serializedTx = tx.serialize();
+    let serializedTx = tx.serialize();
 	let hash = web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
 
 	// wanchainLog('serializeTx: ' + serializedTx.toString('hex'), config.consoleColor.COLOR_FgGreen);

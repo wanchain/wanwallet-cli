@@ -1,5 +1,5 @@
 
-var wanchainLog = function (info, color) {
+let wanchainLog = function (info, color) {
 	if(color){
 		console.log(color, info, '\x1b[0m');
 	} else {

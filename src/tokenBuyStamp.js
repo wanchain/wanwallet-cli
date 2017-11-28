@@ -1,25 +1,23 @@
-
 const fs = require('fs');
 const keythereum = require("keythereum");
-
 const prompt = require('prompt');
+const optimist = require('optimist');
 const colors = require("colors/safe");
-
 const config = require('../config');
-
 const wanchainLog = require('../utils/wanchainLog');
 const buyStamp = require('../utils/buyStampFunc');
 
 // Start the prompt
 prompt.start();
+prompt.override = optimist.argv;
 prompt.message = colors.blue("wanWallet");
 prompt.delimiter = colors.green(">>");
 
 wanchainLog('Input your keystore file name: ', config.consoleColor.COLOR_FgGreen);
-prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
+prompt.get(require('../utils/schema/ordinaryKeystore'), function (err, result) {
 	let keystore;
 	try {
-		let filename = "./keystore/" + result.OrdinaryKeystore + ".json";
+		let filename = "./keystore/" + result.ordinaryKeystore + ".json";
 		let keystoreStr = fs.readFileSync(filename, "utf8");
 
 		keystore = JSON.parse(keystoreStr)[1];

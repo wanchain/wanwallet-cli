@@ -1,6 +1,6 @@
 function checkBalance(web3, address) {
-	var balance = web3.eth.getBalance(address);
-	var weiToEth = web3.fromWei(balance);
+	let balance = web3.eth.getBalance(address);
+	let weiToEth = web3.fromWei(balance);
 
 	return weiToEth.toString();
 }

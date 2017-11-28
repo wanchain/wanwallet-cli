@@ -1,8 +1,8 @@
-var colors = require("colors/safe");
+let colors = require("colors/safe");
 
-var OrdinaryKeystoreSchema = {
+let ordinaryKeystoreSchema = {
 	properties: {
-		OrdinaryKeystore: {
+		ordinaryKeystore: {
 			pattern: '^[A-Za-z0-9]+$',
 			message: 'Consist of numbers and letters.',
 			description: colors.magenta("Input file name (ignore file extension) "),
@@ -11,4 +11,4 @@ var OrdinaryKeystoreSchema = {
 	}
 };
 
-module.exports = OrdinaryKeystoreSchema;
+module.exports = ordinaryKeystoreSchema;

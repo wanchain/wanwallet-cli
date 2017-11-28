@@ -1,9 +1,8 @@
+let colors = require("colors/safe");
 
-var colors = require("colors/safe");
-
-var ordinaryValueSchema = {
+let ordinaryValueSchema = {
 	properties: {
-		value: {
+        ordinaryValue: {
 			pattern: /^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/,
 			message: "value invalid!",
 			description: colors.magenta("Input: "),
