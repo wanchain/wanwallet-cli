@@ -41,7 +41,7 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 			const privKeyA = keythereum.recover(result.keyPassword, keyAObj);
 			const address = '0x' + keystore.address;
 			const waddress = keystore.waddress;
-			const value = 10000000000000000;
+			const value = 1000000000000000;
 
 			buyStamp(privKeyA, address, waddress, value);
 

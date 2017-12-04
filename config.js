@@ -6,8 +6,8 @@ config.host = 'http://121.42.8.74'; // http://localhost
 config.port = 8545;
 
 // Instance Address
-config.contractInstanceAddress = '0x0000000000000000000000000000000000000006';
-config.contractStampAddress = '0x0000000000000000000000000000000000000005';
+config.contractInstanceAddress = '0x0000000000000000000000000000000000000064';
+config.contractStampAddress = '0x00000000000000000000000000000000000000c8';
 
 // Monitor.js parameter
 config.ota = '027396B6b9dDeA223089114b5ceBb61114AAf626cce2616497Fbbda2F076De716503B26a2ACa9238aF011C73dE1e10f669d515e50455F86a803488a358B0Be07F48E';

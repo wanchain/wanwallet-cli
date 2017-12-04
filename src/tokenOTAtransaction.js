@@ -7,7 +7,6 @@ const solc = require('solc');
 const keythereum = require("keythereum");
 
 const wanUtil = require('wanchain-util');
-const ethUtil = wanUtil.ethereumUtil;
 const prompt = require('prompt');
 const colors = require("colors/safe");
 
@@ -170,19 +169,19 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 
 					let stamp = result.waddress;
 
-					let token_to_ota3 =  ethUtil.generateOTAWaddress(token_to_waddr).toLowerCase();
-					let token_to_ota_a3 = ethUtil.recoverPubkeyFromWaddress(token_to_ota3).A;
-					let token_to_ota_addr3 = "0x"+ethUtil.sha3(token_to_ota_a3.slice(1)).slice(-20).toString('hex');
+					let token_to_ota3 =  wanUtil.generateOTAWaddress(token_to_waddr).toLowerCase();
+					let token_to_ota_a3 = wanUtil.recoverPubkeyFromWaddress(token_to_ota3).A;
+					let token_to_ota_addr3 = "0x"+wanUtil.sha3(token_to_ota_a3.slice(1)).slice(-20).toString('hex');
 
-					let receiver_waddr = ethUtil.recoverPubkeyFromWaddress(token_to_waddr).A;
-					let receiver_addr = "0x"+ethUtil.sha3(receiver_waddr.slice(1)).slice(-20).toString('hex');
+					let receiver_waddr = wanUtil.recoverPubkeyFromWaddress(token_to_waddr).A;
+					let receiver_addr = "0x"+wanUtil.sha3(receiver_waddr.slice(1)).slice(-20).toString('hex');
 					// console.log("token_to_ota_addr2:",  token_to_ota_addr3);
 					// console.log("token_to_ota2:",token_to_ota3);
 
 					let otaKey = {};
 
 					// caculate the private key of ota addr.
-					let privateKey = ethUtil.computeWaddrPrivateKey(TokenInstance.otaKey(token_to_ota_addr), account2.privKeyA, account2.privKeyB);
+					let privateKey = wanUtil.computeWaddrPrivateKey(TokenInstance.otaKey(token_to_ota_addr), account2.privKeyA, account2.privKeyB);
 					otaKey.address =token_to_ota_addr;
 					otaKey.privKeyA = privateKey;
 

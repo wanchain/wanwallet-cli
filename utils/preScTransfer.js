@@ -1,8 +1,7 @@
 const fs = require('fs');
 const wanUtil = require('wanchain-util');
-const Tx = require('wanchain-util').ethereumTx;
+const Tx = wanUtil.wanchainTx;
 const Web3 = require("web3");
-const ethUtil = require('wanchain-util').ethereumUtil;
 const config = require('../config');
 
 const web3 = new Web3(new Web3.providers.HttpProvider( config.host + ":8545"));
@@ -14,7 +13,7 @@ web3.wan = new wanUtil.web3Wan(web3);
 
 async function preScTransfer(contractInstanceAddress, contractCoinInstance, privateKey, myAddr, to_waddress, value){
 
-	var otaDestAddress = ethUtil.generateOTAWaddress(to_waddress).toLowerCase();
+	var otaDestAddress = wanUtil.generateOTAWaddress(to_waddress).toLowerCase();
 	console.log('otaDestAddress: ', otaDestAddress);
 	let payload = contractCoinInstance.buyCoinNote.getData(otaDestAddress, value);
 	var serial = '0x' + web3.eth.getTransactionCount(myAddr).toString(16);

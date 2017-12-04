@@ -3,8 +3,7 @@ const Web3 = require("web3");
 const secp256k1 = require('secp256k1');
 
 const wanUtil = require('wanchain-util');
-const ethUtil = wanUtil.ethereumUtil;
-const Tx = wanUtil.ethereumTx;
+const Tx = wanUtil.wanchainTx;
 
 const config = require('../config');
 
@@ -16,27 +15,28 @@ web3.wan = new wanUtil.web3Wan(web3);
 
 
 async function tokenSend(TokenAddress, TokenInstance, stamp, value, token_to_waddr, keystoreAddr, privKeyA,privKeyB, myAddr) {
-	let token_to_ota =  ethUtil.generateOTAWaddress(token_to_waddr).toLowerCase();
-	let token_to_ota_a = ethUtil.recoverPubkeyFromWaddress(token_to_ota).A;
-	let token_to_ota_addr = "0x"+ethUtil.sha3(token_to_ota_a.slice(1)).slice(-20).toString('hex');
-	// console.log("token_to_ota_addr: ",  token_to_ota_addr);
-	// console.log("token_to_ota: ",token_to_ota);
+	let token_to_ota =  wanUtil.generateOTAWaddress(token_to_waddr).toLowerCase();
+	let token_to_ota_a = wanUtil.recoverPubkeyFromWaddress(token_to_ota).A;
+	let token_to_ota_addr = "0x"+wanUtil.sha3(token_to_ota_a.slice(1)).slice(-20).toString('hex');
+	console.log("token_to_ota_addr: ",  token_to_ota_addr);
+	console.log("token_to_ota: ",token_to_ota);
 	let cxtInterfaceCallData = TokenInstance.otatransfer.getData(token_to_ota_addr, token_to_ota, parseInt(value));
 
+	console.log('stamp: ', stamp);
 	let otaSet = web3.wan.getOTAMixSet(stamp, 3);
 	let otaSetBuf = [];
 	for(let i=0; i<otaSet.length; i++){
-		let rpkc = new Buffer(otaSet[i].slice(0,66),'hex');
+		let rpkc = new Buffer(otaSet[i].slice(2,68),'hex');
 		let rpcu = secp256k1.publicKeyConvert(rpkc, false);
 		otaSetBuf.push(rpcu);
 	}
 
 	// console.log("fetch  ota stamp set: ",otaSet);
-	let otaSk = ethUtil.computeWaddrPrivateKey(stamp, privKeyA,privKeyB);
-	let otaPub = ethUtil.recoverPubkeyFromWaddress(stamp);
+	let otaSk = wanUtil.computeWaddrPrivateKey(stamp, privKeyA,privKeyB);
+	let otaPub = wanUtil.recoverPubkeyFromWaddress(stamp);
 
-	let ringArgs = ethUtil.getRingSign(new Buffer(keystoreAddr,'hex'), otaSk,otaPub.A,otaSetBuf);
-	if(!ethUtil.verifyRinSign(ringArgs)){
+	let ringArgs = wanUtil.getRingSign(new Buffer(keystoreAddr,'hex'), otaSk,otaPub.A,otaSetBuf);
+	if(!wanUtil.verifyRinSign(ringArgs)){
 		console.log("ring sign is wrong@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		return;
 	}
@@ -49,7 +49,7 @@ async function tokenSend(TokenAddress, TokenInstance, stamp, value, token_to_wad
 	var rawTx = {
 		Txtype: '0x06',
 		nonce: serial,
-		gasPrice: '0x6fc23ac00',
+		gasPrice: '0x6fc23ac',
 		gasLimit: '0xf4240',
 		to: TokenAddress,
 		value: '0x00',
@@ -65,8 +65,8 @@ async function tokenSend(TokenAddress, TokenInstance, stamp, value, token_to_wad
 	console.log('Tx hash: '+hash);
 	wanchainLog("Waiting for a moment...", config.consoleColor.COLOR_FgGreen);
 
-	let keystore_a = ethUtil.recoverPubkeyFromWaddress(token_to_waddr).A;
-	let token_to_addr = "0x"+ethUtil.sha3(keystore_a.slice(1)).slice(-20).toString('hex');
+	let keystore_a = wanUtil.recoverPubkeyFromWaddress(token_to_waddr).A;
+	let token_to_addr = "0x"+wanUtil.sha3(keystore_a.slice(1)).slice(-20).toString('hex');
 	let receipt = await getTransactionReceipt(hash, stamp, token_to_ota_addr, token_to_addr, TokenInstance, myAddr);
 	console.log(receipt);
 	console.log("Token balance of ",token_to_ota_addr, " is ", TokenInstance.otabalanceOf(token_to_ota_addr).toString(), "key is ", TokenInstance.otaKey(token_to_ota_addr));

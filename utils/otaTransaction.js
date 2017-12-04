@@ -5,8 +5,7 @@ const secp256k1 = require('secp256k1');
 const Web3 = require("web3");
 var config = require('../config');
 let wanUtil = require('wanchain-util');
-var ethUtil = wanUtil.ethereumUtil;
-const Tx = wanUtil.ethereumTx;
+const Tx = wanUtil.wanchainTx;
 
 var web3 = new Web3(new Web3.providers.HttpProvider( config.host + ":8545"));
 
@@ -62,8 +61,8 @@ function getTransactionReceipt(txHash, ota)
 
 async function otaRefund(address, privKeyA, otaSk, otaPubK, ringPubKs, value, ota) {
     let M = new Buffer(address,'hex');
-    let ringArgs = ethUtil.getRingSign(M, otaSk,otaPubK,ringPubKs);
-    if(!ethUtil.verifyRinSign(ringArgs)){
+    let ringArgs = wanUtil.getRingSign(M, otaSk,otaPubK,ringPubKs);
+    if(!wanUtil.verifyRinSign(ringArgs)){
         console.log("ring sign is wrong@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         return;
     }
@@ -120,15 +119,15 @@ async function otaTransaction(ota, value, privKeyA, privKeyB, address) {
     let otaSetBuf = [];
 
     for(let i=0; i<otaSet.length; i++){
-        let rpkc = new Buffer(otaSet[i].slice(0,66),'hex');
+        let rpkc = new Buffer(otaSet[i].slice(2,68),'hex');
         let rpcu = secp256k1.publicKeyConvert(rpkc, false);
         otaSetBuf.push(rpcu);
     }
 
     console.log("fetch  ota set: ",otaSet);
 
-    let otaSk = ethUtil.computeWaddrPrivateKey(ota, privKeyA,privKeyB);
-    let otaPub = ethUtil.recoverPubkeyFromWaddress(ota);
+    let otaSk = wanUtil.computeWaddrPrivateKey(ota, privKeyA,privKeyB);
+    let otaPub = wanUtil.recoverPubkeyFromWaddress(ota);
 
     await otaRefund(address, privKeyA, otaSk,otaPub.A,otaSetBuf,value, ota);
 }

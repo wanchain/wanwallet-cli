@@ -3,8 +3,7 @@ const fs = require('fs');
 const Web3 = require("web3");
 
 const wanUtil = require('wanchain-util');
-const ethUtil = wanUtil.ethereumUtil;
-const Tx = wanUtil.ethereumTx;
+const Tx = wanUtil.wanchainTx;
 
 const config = require('../config');
 
@@ -22,7 +21,7 @@ web3.wan = new wanUtil.web3Wan(web3);
 
 
 async function buyStamp(privateKey,fromaddress, toWaddr, value){
-	var stamp = ethUtil.generateOTAWaddress(toWaddr).toLowerCase();
+	var stamp = wanUtil.generateOTAWaddress(toWaddr).toLowerCase();
 	let payload = contractStampInstance.buyStamp.getData(stamp, value);
 	var serial = '0x' + web3.eth.getTransactionCount(fromaddress).toString(16);
 

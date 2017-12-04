@@ -3,7 +3,7 @@ const prompt = require('prompt');
 const colors = require("colors/safe");
 const wanUtil = require('wanchain-util');
 const keythereum = require("keythereum");
-const Tx = require('wanchain-util').ethereumTx;
+const Tx = require('wanchain-util').wanchainTx;
 const Web3 = require("web3");
 
 const config = require('../config');

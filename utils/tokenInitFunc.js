@@ -1,6 +1,6 @@
 const Web3 = require('web3');
 const fs = require("fs");
-const Tx = require('wanchain-util').ethereumTx;
+const Tx = require('wanchain-util').wanchainTx;
 const path = require('path');
 const solc = require('solc');
 

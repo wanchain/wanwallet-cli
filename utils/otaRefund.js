@@ -2,8 +2,7 @@
 var fs = require('fs');
 const secp256k1 = require('secp256k1');
 const Web3 = require("web3");
-const ethUtil = require('wanchain-util').ethereumUtil;
-const Tx = require('wanchain-util').ethereumTx;
+const Tx = require('wanchain-util').wanchainTx;
 
 var config = require('../config');
 var wanchainLog = require('./wanchainLog');
@@ -49,8 +48,8 @@ function getTransactionReceipt(txHash, ota)
 
 async function otaRefund(contractInstanceAddress, contractCoinInstance, address, privKeyA, otaSk, otaPubK, ringPubKs, value, ota) {
     let M = new Buffer(address,'hex');
-    let ringArgs = ethUtil.getRingSign(M, otaSk,otaPubK,ringPubKs);
-    if(!ethUtil.verifyRinSign(ringArgs)){
+    let ringArgs = wanUtil.getRingSign(M, otaSk,otaPubK,ringPubKs);
+    if(!wanUtil.verifyRinSign(ringArgs)){
 	      wanchainLog('ring sign is wrong@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@', config.consoleColor.COLOR_FgRed);
         return;
     }
@@ -98,8 +97,8 @@ async function main(ota, value, privKeyA, privKeyB, address) {
 	let contractCoinSC = web3.eth.contract(coinSCDefinition);
 	let contractCoinInstance = contractCoinSC.at(contractInstanceAddress);
 
-	let otaSk = ethUtil.computeWaddrPrivateKey(ota, privKeyA,privKeyB);
-	let otaPub = ethUtil.recoverPubkeyFromWaddress(ota);
+	let otaSk = wanUtil.computeWaddrPrivateKey(ota, privKeyA,privKeyB);
+	let otaPub = wanUtil.recoverPubkeyFromWaddress(ota);
 
 	await otaRefund(contractInstanceAddress, contractCoinInstance,address,privKeyA, otaSk,otaPub.A,otaSetBuf,value, ota);
 	console.log("New balance of",address," is: ",web3.eth.getBalance(address).toString());

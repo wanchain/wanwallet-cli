@@ -52,7 +52,7 @@ function createKeystore(password, fileName, wanchainLog) {
 
 			var ciphertext = Buffer.concat([cipher.update(privkey), cipher.final()]);
 
-			var mac = wanUtil.ethereumUtil.sha3(Buffer.concat([derivedKey.slice(16, 32), new Buffer(ciphertext, 'hex')]));
+			var mac = wanUtil.sha3(Buffer.concat([derivedKey.slice(16, 32), new Buffer(ciphertext, 'hex')]));
 
 			Crypto.push(
 				{
@@ -66,7 +66,7 @@ function createKeystore(password, fileName, wanchainLog) {
 			)
 		}
 
-		var waddress = wanUtil.ethereumUtil.generateWaddrFromPriv(privKeys[0], privKeys[1]);
+		var waddress = wanUtil.generateWaddrFromPriv(privKeys[0], privKeys[1]);
 		var address = '0x' + ethUtil.privateToAddress(privKeys[0]).toString('hex');
 
 		var data = {
