@@ -70,7 +70,13 @@ prompt.get(require('../utils/schema/mykeystore'), function (err, result) {
 
 		wanchainLog("Input receiver's waddress", config.consoleColor.COLOR_FgGreen);
 		prompt.get(require('../utils/schema/privacyAddr'), function (err, result) {
-			let token_to_waddr = result.waddress.slice(2);
+			let token_to_waddr;
+
+			if (result.waddress.slice(2).toLocaleLowerCase() === '0x') {
+                token_to_waddr = result.waddress.slice(2);
+			} else {
+                token_to_waddr = result.waddress;
+			}
 
 			wanchainLog('Input value: ', config.consoleColor.COLOR_FgGreen);
 			prompt.get(require('../utils/schema/theValue'), function (err, result) {
