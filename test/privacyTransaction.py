@@ -22,9 +22,10 @@ class PrivacyTransaction(Recharge):
 
     def generate_privacy_transaction(self):
         self.recharge_account()
+        time.sleep(20)
 
-        self.wallet = CreateKeystore()
-        self.wallet.createWallet()
+        self.wallet = Recharge()
+        self.wallet.recharge_account()
 
         time.sleep(10)
 
@@ -49,7 +50,7 @@ class PrivacyTransaction(Recharge):
         child.expect(commonUtil.default_transfer_amount)
 
         result = child.read()
-        print result
+        
 
         if (result.find("otaDestAddress") == -1):
             commonUtil.exit_test("'otaDestAddress' text not found ", child)
@@ -59,7 +60,8 @@ class PrivacyTransaction(Recharge):
         if (ota_address_start == -1):
             commonUtil.exit_test("'otaDestAddress' value not found", child)    
 
-        self.ota_address = result[ota_address_start:ota_address_start + 135]    
+        self.ota_address = result[ota_address_start+2:ota_address_start + 135]    
+        print self.ota_address
 
         if (result.find(commonUtil.default_stamp_value) == -1):
             commonUtil.exit_test("stamp value " + commonUtil.default_stamp_value + " not found", child)

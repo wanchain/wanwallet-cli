@@ -2,6 +2,7 @@ from recharge import *
 import pexpect
 import sys
 import commonUtil
+import time
 
 default_balance = '1000000'
 
@@ -12,6 +13,8 @@ class TokenRecharge(Recharge):
 
     def token_recharge(self):
         self.recharge_account()
+        time.sleep(10)
+
         child = pexpect.spawn('node tokenRecharge', cwd='../src/')
         child.logfile = sys.stdout
 
