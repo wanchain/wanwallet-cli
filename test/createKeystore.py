@@ -1,10 +1,15 @@
-import pexpect
-import commonUtil
 import sys
-import os
+
+import pexpect
+
+import commonUtil
+
+test_name = "createKeystore"
 
 
 class CreateKeystore(object):
+    """ Class to test create wallet operation """
+
     def __init__(self):
         self.address = ''
         self.waddress = ''
@@ -23,57 +28,57 @@ class CreateKeystore(object):
     def get_password(self):
         return self.password
 
-    def createWallet(self):
+    def create_wallet(self):
+        """ test create wallet operation"""
 
         child = pexpect.spawn('node createKeystore', cwd='../src/')
-        child.logfile = sys.stdout
+        if commonUtil.show_logs:
+            child.logfile = sys.stdout
 
         self.file_name = commonUtil.get_random_string()
         self.password = commonUtil.get_random_string()
 
-        commonUtil.check_expect("Input file name", child)
-
+        commonUtil.check_expect("Input file name", child, test_name, "'Input file name' prompt not found")
         child.sendline(self.file_name)
-        child.expect(self.file_name)
 
-        commonUtil.check_expect("Input password", child)
-
+        commonUtil.check_expect("Input password", child, test_name, "'Input password' prompt not found")
         child.sendline(self.password)
-        child.expect(self.password)
 
         result = child.read()
 
-        if (result.find("Please check is the file_name used") != -1):
-            commonUtil.exit_test("file_name is already present in the system", child)
+        if result.find("Please check if the filename is used") != -1:
+            commonUtil.exit_test("file name is already present in the system", child)
 
-        if (result.find("address") == -1):
-            commonUtil.exit_test("Wallet Summary: address title not found", child)
+        if result.find("address") == -1:
+            commonUtil.exit_test("'address' title not found in wallet summary", child)
 
-        if (result.find("waddress") == -1):
-            commonUtil.exit_test("Wallet Summary: waddress title not found", child)
+        if result.find("waddress") == -1:
+            commonUtil.exit_test("waddress' title not found in wallet summary", child)
 
-        if (result.find(self.file_name) == -1):
-            commonUtil.exit_test("Wallet Summary: file name not present", child)
+        if result.find(self.file_name) == -1:
+            commonUtil.exit_test("file name:" + self.file_name + " not found in wallet summary", child)
 
-        if (result.find(self.password) == -1):
-            commonUtil.exit_test("Wallet Summary: password not present", child)
+        if result.find(self.password) == -1:
+            commonUtil.exit_test("password:" + self.password + " not found in wallet summary", child)
 
         address_start = result.find('0x')
+        if address_start == -1:
+            commonUtil.exit_test('address value starting with 0x not found in wallet summary', child)
+        self.address = result[address_start:address_start + 42]
 
-        self.address = result[address_start:address_start + 43]
-        if (address_start == -1):
-            commonUtil.exit_test('Wallet Summary: address not found', child)
-
-        waddress_start = result.find('0x', address_start + 43)
-
-        self.waddress = result[waddress_start:waddress_start + 135]
-        if (waddress_start == -1):
-            commonUtil.exit_test('Wallet Summary: wan address not found', child)
+        waddress_start = result.find('0x', address_start + 42)
+        if waddress_start == -1:
+            commonUtil.exit_test('wan address value starting with 0x not found in wallet summary', child)
+        self.waddress = result[waddress_start:waddress_start + 134]
 
         child.expect(pexpect.EOF)
 
 
-if __name__ == "__main__":
+def main():
     createKeystore = CreateKeystore()
-    createKeystore.createWallet()
-    commonUtil.test_successful(__file__)
+    createKeystore.create_wallet()
+    commonUtil.test_successful(test_name)
+
+
+if __name__ == "__main__":
+    main()

@@ -14,7 +14,7 @@ function createKeystore(password, fileName, wanchainLog) {
 	try {
 		fs.readFileSync(filepath, 'utf8');
 
-		wanchainLog('Please check is the filename used.', '\x1b[31m');
+		wanchainLog('Please check if the filename is used.', '\x1b[31m');
 		result = [false];
 		return result;
 	} catch (e) {

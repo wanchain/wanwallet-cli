@@ -1,40 +1,50 @@
-from recharge import *
-import pexpect
-import sys
-import commonUtil
 import time
 
-default_balance = '1000000'
+from recharge import *
+
+test_name = "tokenRecharge"
 
 
 class TokenRecharge(Recharge):
+    """ Class to test token recharge operation """
+
     def __init__(self):
         super(TokenRecharge, self).__init__()
 
     def token_recharge(self):
+        """ test token recharge operation """
+
+        # for token recharge, we need a wallet with eth balance
         self.recharge_account()
-        time.sleep(10)
+
+        # wait for some time, recharge takes time to reflect.reflect. otherwise it is throwing an error with insufficient fund
+        time.sleep(commonUtil.default_wait_after_recharge)
 
         child = pexpect.spawn('node tokenRecharge', cwd='../src/')
-        child.logfile = sys.stdout
+        if commonUtil.show_logs:
+            child.logfile = sys.stdout
 
-        commonUtil.check_expect("Input your keystore file name", child)
+        commonUtil.check_expect("Input your keystore file name", child, test_name,
+                                "'Input your keystore file name' prompt not found")
         child.sendline(self.get_file_name())
 
-        commonUtil.check_expect("Input password:", child)
+        commonUtil.check_expect("Input password:", child, test_name, "'Input password:' prompt not found")
         child.sendline(self.get_password())
 
-        i = child.expect(
-            [r'[\s\S]*(Token balance of)[\s\S]*(' + default_balance + r')*[\s\S]', pexpect.TIMEOUT, pexpect.EOF],
-            timeout=30)
-        if i == 1 or i == 2:
-            commonUtil.exit_test(
-                "Test case was expecting text 'Token balance of:' and default balance '" + default_balance + "'", child)
+        # expect "Token balance of", ether address and default balance in the result summary
+        commonUtil.check_expect(
+            "Token balance of)[\s\S]*(" + self.get_eth_address() + ")[\s\S]*(" + commonUtil.default_balance, child,
+            test_name,
+            "Token recharge message not displayed as expected")
 
         child.expect(pexpect.EOF)
 
 
-if __name__ == "__main__":
+def main():
     tokenRecharge = TokenRecharge()
     tokenRecharge.token_recharge()
-    commonUtil.test_successful(__file__)
+    commonUtil.test_successful(test_name)
+
+
+if __name__ == "__main__":
+    main()

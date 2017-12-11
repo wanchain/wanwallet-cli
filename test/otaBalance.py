@@ -1,8 +1,6 @@
 from privacyTransaction import *
-import pexpect
-import sys
-import commonUtil
-import time
+
+test_name = "otaBalance"
 
 
 class OTABalance(PrivacyTransaction):
@@ -18,20 +16,16 @@ class OTABalance(PrivacyTransaction):
         commonUtil.check_expect("Input waddress", child)
         child.sendline(self.get_receiver_wallet().get_wan_address())
 
+        i = child.expect(
+            '[\s\S]*(' + self.get_ota_address() + ')*[\s\S]*(' + commonUtil.default_stamp_value + ')*[\s\S]', child,
+            test_name, "ota address or ota balance not correct")
 
 
-        i = child.expect([
-                             r'[\s\S]*(' + self.get_ota_address() + r')*[\s\S]*(' + commonUtil.default_stamp_value + r')*[\s\S]',
-                             pexpect.TIMEOUT, pexpect.EOF], timeout=30)
-        if i == 1 or i == 2:
-            commonUtil.exit_test(
-                "ota address or ota balance not correct",
-                child)
-
-        child.expect(pexpect.EOF)
+def main():
+    ota_balance = OTABalance()
+    ota_balance.get_ota_balance()
+    commonUtil.test_successful(test_name)
 
 
 if __name__ == "__main__":
-    ota_balance = OTABalance()
-    ota_balance.get_ota_balance()
-    commonUtil.test_successful(__file__)
+    main()
