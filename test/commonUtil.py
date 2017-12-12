@@ -7,9 +7,10 @@ import pexpect
 default_balance = '1000000'
 default_eth_recharge_value = "12"
 default_eth_transfer_amount = "2"
+default_eth_privacy_transaction = "10"
 default_wan_transfer_amount = "200"
-default_stamp_value = '2000000000000000000'
-default_timeout = '50'
+default_stamp_value = '1000000000000000000'
+default_timeout = '120'
 default_wait_after_recharge = 15
 show_logs = False
 

@@ -24,3 +24,6 @@ Run following commands from wanchain-cli/test directory to execute test cases.
 # Show console log
 - Go to commonUtil.py
 - change ```show_logs = True```
+
+# Roadmap
+- These are basic test cases with happy flows. We can add more detailed and complex test cases to cover all scenarios
